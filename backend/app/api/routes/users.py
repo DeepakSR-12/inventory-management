@@ -133,7 +133,7 @@ def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
         raise HTTPException(
             status_code=403, detail="Super users are not allowed to delete themselves"
         )
-    statement = delete(Item).where(col(Item.owner_id) == current_user.id)
+    statement = delete(Item)
     session.exec(statement)  # type: ignore
     session.delete(current_user)
     session.commit()
@@ -219,13 +219,14 @@ def delete_user(
     Delete a user.
     """
     user = session.get(User, user_id)
+    print(user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     if user == current_user:
         raise HTTPException(
             status_code=403, detail="Super users are not allowed to delete themselves"
         )
-    statement = delete(Item).where(col(Item.owner_id) == user_id)
+    statement = delete(Item)
     session.exec(statement)  # type: ignore
     session.delete(user)
     session.commit()

@@ -35,6 +35,27 @@ export type ItemsPublic = {
   count: number;
 };
 
+export type WarehouseCreate = {
+  name: string;
+  location: string;
+};
+
+export type WarehousePublic = {
+  id: number;
+  name: string;
+  location: string;
+};
+
+export type WarehouseUpdate = {
+  name: string;
+  location: string;
+};
+
+export type WarehousesPublic = {
+  data: Array<WarehousePublic>;
+  count: number;
+};
+
 export type Message = {
   message: string;
 };

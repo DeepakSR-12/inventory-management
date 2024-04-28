@@ -1,16 +1,18 @@
-import { Button, Flex, Icon, useDisclosure } from "@chakra-ui/react"
-import { FaPlus } from "react-icons/fa"
+import { Button, Flex, Icon, useDisclosure } from "@chakra-ui/react";
+import { FaPlus } from "react-icons/fa";
 
-import AddUser from "../Admin/AddUser"
-import AddItem from "../Items/AddItem"
+import AddItem from "../Items/AddItem";
+import AddWarehouse from "../Warehouses/AddWarehouses";
+import AddUser from "../Users/AddUser";
 
 interface NavbarProps {
-  type: string
+  type: string;
 }
 
 const Navbar = ({ type }: NavbarProps) => {
-  const addUserModal = useDisclosure()
-  const addItemModal = useDisclosure()
+  const addUserModal = useDisclosure();
+  const addItemModal = useDisclosure();
+  const addWarehouseModal = useDisclosure();
 
   return (
     <>
@@ -26,15 +28,25 @@ const Navbar = ({ type }: NavbarProps) => {
           variant="primary"
           gap={1}
           fontSize={{ base: "sm", md: "inherit" }}
-          onClick={type === "User" ? addUserModal.onOpen : addItemModal.onOpen}
+          onClick={
+            type === "User"
+              ? addUserModal.onOpen
+              : type === "Item"
+                ? addItemModal.onOpen
+                : addWarehouseModal.onOpen
+          }
         >
           <Icon as={FaPlus} /> Add {type}
         </Button>
         <AddUser isOpen={addUserModal.isOpen} onClose={addUserModal.onClose} />
+        <AddWarehouse
+          isOpen={addWarehouseModal.isOpen}
+          onClose={addWarehouseModal.onClose}
+        />
         <AddItem isOpen={addItemModal.isOpen} onClose={addItemModal.onClose} />
       </Flex>
     </>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

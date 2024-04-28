@@ -21,8 +21,8 @@ import { type UserPublic, UsersService } from "../../client"
 import ActionsMenu from "../../components/Common/ActionsMenu"
 import Navbar from "../../components/Common/Navbar"
 
-export const Route = createFileRoute("/_layout/admin")({
-  component: Admin,
+export const Route = createFileRoute("/_layout/users")({
+  component: Users,
 })
 
 const MembersTableBody = () => {
@@ -87,7 +87,7 @@ const MembersBodySkeleton = () => {
   )
 }
 
-function Admin() {
+function Users() {
   return (
     <Container maxW="full">
       <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>

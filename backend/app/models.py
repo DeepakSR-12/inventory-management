@@ -56,6 +56,7 @@ class UsersPublic(SQLModel):
     count: int
 
 
+# Item model, database table inferred from class name
 # Shared properties
 class ItemBase(SQLModel):
     name: str
@@ -90,6 +91,40 @@ class ItemPublic(ItemBase):
 
 class ItemsPublic(SQLModel):
     data: list[ItemPublic]
+    count: int
+
+# Warehouse model, database table inferred from class name
+# Shared properties
+class WarehouseBase(SQLModel):
+    name: str
+    location: str
+
+
+# Properties to receive on warehouse creation
+class WarehouseCreate(WarehouseBase):
+    name: str
+    location: str
+
+
+# Properties to receive on warehouse update
+class WarehouseUpdate(WarehouseBase):
+    name: str | None = None  # type: ignore
+    location: str | None = None  # type: ignore    
+
+
+# Database model, database table inferred from class name
+class Warehouse(WarehouseBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    name: str
+
+
+# Properties to return via API, id is always required
+class WarehousePublic(WarehouseBase):
+    id: int
+
+
+class WarehousesPublic(SQLModel):
+    data: list[WarehousePublic]
     count: int
 
 
