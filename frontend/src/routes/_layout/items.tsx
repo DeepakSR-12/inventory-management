@@ -10,42 +10,43 @@ import {
   Th,
   Thead,
   Tr,
-} from "@chakra-ui/react"
-import { useSuspenseQuery } from "@tanstack/react-query"
-import { createFileRoute } from "@tanstack/react-router"
+} from "@chakra-ui/react";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 
-import { Suspense } from "react"
-import { ErrorBoundary } from "react-error-boundary"
-import { ItemsService } from "../../client"
-import ActionsMenu from "../../components/Common/ActionsMenu"
-import Navbar from "../../components/Common/Navbar"
+import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import { ItemsService } from "../../client";
+import ActionsMenu from "../../components/Common/ActionsMenu";
+import Navbar from "../../components/Common/Navbar";
 
 export const Route = createFileRoute("/_layout/items")({
   component: Items,
-})
+});
 
 function ItemsTableBody() {
   const { data: items } = useSuspenseQuery({
     queryKey: ["items"],
     queryFn: () => ItemsService.readItems({}),
-  })
+  });
 
   return (
     <Tbody>
       {items.data.map((item) => (
         <Tr key={item.id}>
           <Td>{item.id}</Td>
-          <Td>{item.title}</Td>
-          <Td color={!item.description ? "ui.dim" : "inherit"}>
-            {item.description || "N/A"}
+          <Td color={!item.name ? "ui.dim" : "inherit"}>
+            {item.name || "N/A"}
           </Td>
+          <Td>{item.warehouse_price}</Td>
+          <Td>{item.retail_price}</Td>
           <Td>
             <ActionsMenu type={"Item"} value={item} />
           </Td>
         </Tr>
       ))}
     </Tbody>
-  )
+  );
 }
 function ItemsTable() {
   return (
@@ -54,8 +55,9 @@ function ItemsTable() {
         <Thead>
           <Tr>
             <Th>ID</Th>
-            <Th>Title</Th>
-            <Th>Description</Th>
+            <Th>Name</Th>
+            <Th>Warehouse Price</Th>
+            <Th>Retail Price</Th>
             <Th>Actions</Th>
           </Tr>
         </Thead>
@@ -90,7 +92,7 @@ function ItemsTable() {
         </ErrorBoundary>
       </Table>
     </TableContainer>
-  )
+  );
 }
 
 function Items() {
@@ -103,5 +105,5 @@ function Items() {
       <Navbar type={"Item"} />
       <ItemsTable />
     </Container>
-  )
+  );
 }

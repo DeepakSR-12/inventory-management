@@ -11,21 +11,21 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-} from "@chakra-ui/react"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { type SubmitHandler, useForm } from "react-hook-form"
+} from "@chakra-ui/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { type SubmitHandler, useForm } from "react-hook-form";
 
-import { type ApiError, type ItemCreate, ItemsService } from "../../client"
-import useCustomToast from "../../hooks/useCustomToast"
+import { type ApiError, type ItemCreate, ItemsService } from "../../client";
+import useCustomToast from "../../hooks/useCustomToast";
 
 interface AddItemProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 const AddItem = ({ isOpen, onClose }: AddItemProps) => {
-  const queryClient = useQueryClient()
-  const showToast = useCustomToast()
+  const queryClient = useQueryClient();
+  const showToast = useCustomToast();
   const {
     register,
     handleSubmit,
@@ -35,31 +35,32 @@ const AddItem = ({ isOpen, onClose }: AddItemProps) => {
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
-      title: "",
-      description: "",
+      name: "",
+      warehouse_price: null,
+      retail_price: null,
     },
-  })
+  });
 
   const mutation = useMutation({
     mutationFn: (data: ItemCreate) =>
       ItemsService.createItem({ requestBody: data }),
     onSuccess: () => {
-      showToast("Success!", "Item created successfully.", "success")
-      reset()
-      onClose()
+      showToast("Success!", "Item created successfully.", "success");
+      reset();
+      onClose();
     },
     onError: (err: ApiError) => {
-      const errDetail = (err.body as any)?.detail
-      showToast("Something went wrong.", `${errDetail}`, "error")
+      const errDetail = (err.body as any)?.detail;
+      showToast("Something went wrong.", `${errDetail}`, "error");
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["items"] })
+      queryClient.invalidateQueries({ queryKey: ["items"] });
     },
-  })
+  });
 
   const onSubmit: SubmitHandler<ItemCreate> = (data) => {
-    mutation.mutate(data)
-  }
+    mutation.mutate(data);
+  };
 
   return (
     <>
@@ -74,28 +75,47 @@ const AddItem = ({ isOpen, onClose }: AddItemProps) => {
           <ModalHeader>Add Item</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <FormControl isRequired isInvalid={!!errors.title}>
-              <FormLabel htmlFor="title">Title</FormLabel>
+            <FormControl isRequired isInvalid={!!errors.name}>
+              <FormLabel htmlFor="name">Name</FormLabel>
               <Input
-                id="title"
-                {...register("title", {
-                  required: "Title is required.",
+                id="name"
+                {...register("name", {
+                  required: "Name is required.",
                 })}
-                placeholder="Title"
+                placeholder="Name"
                 type="text"
               />
-              {errors.title && (
-                <FormErrorMessage>{errors.title.message}</FormErrorMessage>
+              {errors.name && (
+                <FormErrorMessage>{errors.name.message}</FormErrorMessage>
               )}
             </FormControl>
-            <FormControl mt={4}>
-              <FormLabel htmlFor="description">Description</FormLabel>
+            <FormControl mt={4} isRequired isInvalid={!!errors.warehouse_price}>
+              <FormLabel htmlFor="warehouse_price">Warehouse Price</FormLabel>
               <Input
-                id="description"
-                {...register("description")}
-                placeholder="Description"
-                type="text"
+                id="Warehouse_price"
+                {...register("warehouse_price")}
+                placeholder="Warehouse Price"
+                type="number"
               />
+              {errors.warehouse_price && (
+                <FormErrorMessage>
+                  {errors.warehouse_price.message}
+                </FormErrorMessage>
+              )}
+            </FormControl>
+            <FormControl mt={4} isRequired isInvalid={!!errors.retail_price}>
+              <FormLabel htmlFor="retail_price">Retail Price</FormLabel>
+              <Input
+                id="retail_price"
+                {...register("retail_price")}
+                placeholder="Retail Price"
+                type="number"
+              />
+              {errors.retail_price && (
+                <FormErrorMessage>
+                  {errors.retail_price.message}
+                </FormErrorMessage>
+              )}
             </FormControl>
           </ModalBody>
 
@@ -108,7 +128,7 @@ const AddItem = ({ isOpen, onClose }: AddItemProps) => {
         </ModalContent>
       </Modal>
     </>
-  )
-}
+  );
+};
 
-export default AddItem
+export default AddItem;
