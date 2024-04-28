@@ -12,13 +12,14 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { ItemsService } from "../../client";
 import ActionsMenu from "../../components/Common/ActionsMenu";
 import Navbar from "../../components/Common/Navbar";
+import useAuth from "../../hooks/useAuth";
 
 export const Route = createFileRoute("/_layout/items")({
   component: Items,
@@ -96,14 +97,20 @@ function ItemsTable() {
 }
 
 function Items() {
-  return (
-    <Container maxW="full">
-      <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
-        Items Management
-      </Heading>
+  const { user } = useAuth();
 
-      <Navbar type={"Item"} />
-      <ItemsTable />
-    </Container>
-  );
+  if (!user?.is_superuser) {
+    return <Navigate to="/" replace />
+  } else {
+    return (
+      <Container maxW="full">
+        <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
+          Items Management
+        </Heading>
+
+        <Navbar type={"Item"} />
+        <ItemsTable />
+      </Container>
+    );
+  }
 }

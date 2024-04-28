@@ -14,12 +14,13 @@ import {
   Tr,
 } from "@chakra-ui/react"
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
-import { createFileRoute } from "@tanstack/react-router"
+import { Navigate, createFileRoute } from "@tanstack/react-router"
 
 import { Suspense } from "react"
 import { type UserPublic, UsersService } from "../../client"
 import ActionsMenu from "../../components/Common/ActionsMenu"
 import Navbar from "../../components/Common/Navbar"
+import useAuth from "../../hooks/useAuth"
 
 export const Route = createFileRoute("/_layout/users")({
   component: Users,
@@ -88,28 +89,34 @@ const MembersBodySkeleton = () => {
 }
 
 function Users() {
-  return (
-    <Container maxW="full">
-      <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
-        User Management
-      </Heading>
-      <Navbar type={"User"} />
-      <TableContainer>
-        <Table fontSize="md" size={{ base: "sm", md: "md" }}>
-          <Thead>
-            <Tr>
-              <Th width="20%">Full name</Th>
-              <Th width="50%">Email</Th>
-              <Th width="10%">Role</Th>
-              <Th width="10%">Status</Th>
-              <Th width="10%">Actions</Th>
-            </Tr>
-          </Thead>
-          <Suspense fallback={<MembersBodySkeleton />}>
-            <MembersTableBody />
-          </Suspense>
-        </Table>
-      </TableContainer>
-    </Container>
-  )
+  const { user } = useAuth();
+
+  if (!user?.is_superuser) {
+    return <Navigate to="/" replace />
+  } else {
+    return (
+      <Container maxW="full">
+        <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
+          User Management
+        </Heading>
+        <Navbar type={"User"} />
+        <TableContainer>
+          <Table fontSize="md" size={{ base: "sm", md: "md" }}>
+            <Thead>
+              <Tr>
+                <Th width="20%">Full name</Th>
+                <Th width="50%">Email</Th>
+                <Th width="10%">Role</Th>
+                <Th width="10%">Status</Th>
+                <Th width="10%">Actions</Th>
+              </Tr>
+            </Thead>
+            <Suspense fallback={<MembersBodySkeleton />}>
+              <MembersTableBody />
+            </Suspense>
+          </Table>
+        </TableContainer>
+      </Container>
+    )
+  }
 }

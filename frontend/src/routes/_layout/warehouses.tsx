@@ -12,13 +12,14 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { Navigate, createFileRoute } from "@tanstack/react-router";
 
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { WarehousesService } from "../../client";
 import ActionsMenu from "../../components/Common/ActionsMenu";
 import Navbar from "../../components/Common/Navbar";
+import useAuth from "../../hooks/useAuth";
 
 export const Route = createFileRoute("/_layout/warehouses")({
   component: Warehouses,
@@ -94,14 +95,20 @@ function WarehousesTable() {
 }
 
 function Warehouses() {
-  return (
-    <Container maxW="full">
-      <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
-        Warehouses Management
-      </Heading>
+  const { user } = useAuth();
 
-      <Navbar type={"Warehouses"} />
-      <WarehousesTable />
-    </Container>
-  );
+  if (!user?.is_superuser) {
+    return <Navigate to="/" replace />;
+  } else {
+    return (
+      <Container maxW="full">
+        <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
+          Warehouses Management
+        </Heading>
+
+        <Navbar type={"Warehouses"} />
+        <WarehousesTable />
+      </Container>
+    );
+  }
 }

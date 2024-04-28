@@ -1,16 +1,17 @@
 import { Box, Flex, Icon, Text, useColorModeValue } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { FiBriefcase, FiHome, FiSettings, FiUsers, FiShoppingBag } from "react-icons/fi";
+import {
+  FiBriefcase,
+  FiHome,
+  FiSettings,
+  FiUsers,
+  FiShoppingBag,
+} from "react-icons/fi";
 
 import type { UserPublic } from "../../client";
 
-const items = [
-  { icon: FiHome, title: "Dashboard", path: "/" },
-  { icon: FiBriefcase, title: "Items", path: "/items" },
-  { icon: FiHome, title: "Warehouses", path: "/warehouses" },
-  { icon: FiShoppingBag, title: "Stores", path: "/stores" },
-];
+const items = [{ icon: FiHome, title: "Dashboard", path: "/" }];
 
 interface SidebarItemsProps {
   onClose?: () => void;
@@ -22,16 +23,20 @@ const SidebarItems = ({ onClose }: SidebarItemsProps) => {
   const bgActive = useColorModeValue("#E2E8F0", "#4A5568");
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"]);
 
-  const finalItems = currentUser?.is_superuser
+  let finalItems = currentUser?.is_superuser
     ? [
         ...items,
+        { icon: FiBriefcase, title: "Items", path: "/items" },
+        { icon: FiHome, title: "Warehouses", path: "/warehouses" },
+        { icon: FiShoppingBag, title: "Stores", path: "/stores" },
         { icon: FiUsers, title: "Users", path: "/users" },
-        { icon: FiSettings, title: "User Settings", path: "/settings" },
       ]
-    : [
-        ...items,
-        { icon: FiSettings, title: "User Settings", path: "/settings" },
-      ];
+    : items;
+
+  finalItems = [
+    ...finalItems,
+    { icon: FiSettings, title: "User Settings", path: "/settings" },
+  ];
 
   const listItems = finalItems.map(({ icon, title, path }) => (
     <Flex
