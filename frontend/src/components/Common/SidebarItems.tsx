@@ -9,7 +9,6 @@ const items = [
   { icon: FiHome, title: "Dashboard", path: "/" },
   { icon: FiBriefcase, title: "Items", path: "/items" },
   { icon: FiHome, title: "Warehouses", path: "/warehouses" },
-  { icon: FiSettings, title: "User Settings", path: "/settings" },
 ];
 
 interface SidebarItemsProps {
@@ -23,8 +22,15 @@ const SidebarItems = ({ onClose }: SidebarItemsProps) => {
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"]);
 
   const finalItems = currentUser?.is_superuser
-    ? [...items, { icon: FiUsers, title: "Users", path: "/users" }]
-    : items;
+    ? [
+        ...items,
+        { icon: FiUsers, title: "Users", path: "/users" },
+        { icon: FiSettings, title: "User Settings", path: "/settings" },
+      ]
+    : [
+        ...items,
+        { icon: FiSettings, title: "User Settings", path: "/settings" },
+      ];
 
   const listItems = finalItems.map(({ icon, title, path }) => (
     <Flex

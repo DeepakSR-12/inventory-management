@@ -17,37 +17,56 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 
 import {
   type ApiError,
-  type ItemPublic,
-  type ItemUpdate,
-  ItemsService,
+  type WarehouseCreate,
+  type WarehousePublic,
+  type WarehouseUpdate,
+  WarehousesService,
 } from "../../client";
 import useCustomToast from "../../hooks/useCustomToast";
 
-interface EditItemProps {
-  item: ItemPublic;
+interface WarehouseFormProps {
+  mode: "add" | "edit";
+  warehouse?: WarehousePublic; // Only needed for edit mode
   isOpen: boolean;
   onClose: () => void;
 }
 
-const EditItem = ({ item, isOpen, onClose }: EditItemProps) => {
+const WarehouseForm = ({
+  mode,
+  warehouse,
+  isOpen,
+  onClose,
+}: WarehouseFormProps) => {
   const queryClient = useQueryClient();
   const showToast = useCustomToast();
+  const isEdit = mode === "edit";
+
   const {
     register,
     handleSubmit,
     reset,
-    formState: { isSubmitting, errors, isDirty },
-  } = useForm<ItemUpdate>({
+    formState: { errors, isSubmitting, isDirty },
+  } = useForm({
     mode: "onBlur",
     criteriaMode: "all",
-    defaultValues: item,
+    defaultValues: isEdit ? warehouse : { name: "", location: "" },
   });
 
   const mutation = useMutation({
-    mutationFn: (data: ItemUpdate) =>
-      ItemsService.updateItem({ id: item.id, requestBody: data }),
+    mutationFn: (data: WarehouseCreate | WarehouseUpdate) =>
+      isEdit
+        ? WarehousesService.updateWarehouse({
+            id: warehouse!.id,
+            requestBody: data,
+          })
+        : WarehousesService.createWarehouse({ requestBody: data }),
     onSuccess: () => {
-      showToast("Success!", "Item updated successfully.", "success");
+      showToast(
+        "Success!",
+        `Warehouse ${isEdit ? "updated" : "created"} successfully.`,
+        "success"
+      );
+      reset();
       onClose();
     },
     onError: (err: ApiError) => {
@@ -55,11 +74,11 @@ const EditItem = ({ item, isOpen, onClose }: EditItemProps) => {
       showToast("Something went wrong.", `${errDetail}`, "error");
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["items"] });
+      queryClient.invalidateQueries({ queryKey: ["warehouses"] });
     },
   });
 
-  const onSubmit: SubmitHandler<ItemUpdate> = async (data) => {
+  const onSubmit: SubmitHandler<WarehouseCreate | WarehouseUpdate> = (data) => {
     mutation.mutate(data);
   };
 
@@ -78,7 +97,9 @@ const EditItem = ({ item, isOpen, onClose }: EditItemProps) => {
       >
         <ModalOverlay />
         <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader>Edit Item</ModalHeader>
+          <ModalHeader>
+            {isEdit ? "Edit Warehouse" : "Add Warehouse"}
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl isRequired isInvalid={!!errors.name}>
@@ -95,33 +116,16 @@ const EditItem = ({ item, isOpen, onClose }: EditItemProps) => {
                 <FormErrorMessage>{errors.name.message}</FormErrorMessage>
               )}
             </FormControl>
-
-            <FormControl mt={4} isRequired isInvalid={!!errors.warehouse_price}>
-              <FormLabel htmlFor="warehouse_price">Warehouse Price</FormLabel>
+            <FormControl mt={4} isRequired isInvalid={!!errors.location}>
+              <FormLabel htmlFor="location">Location</FormLabel>
               <Input
-                id="Warehouse_price"
-                {...register("warehouse_price")}
-                placeholder="Warehouse Price"
-                type="number"
+                id="location"
+                {...register("location")}
+                placeholder="Location"
+                type="text"
               />
-              {errors.warehouse_price && (
-                <FormErrorMessage>
-                  {errors.warehouse_price.message}
-                </FormErrorMessage>
-              )}
-            </FormControl>
-            <FormControl mt={4} isRequired isInvalid={!!errors.retail_price}>
-              <FormLabel htmlFor="retail_price">Retail Price</FormLabel>
-              <Input
-                id="retail_price"
-                {...register("retail_price")}
-                placeholder="Retail Price"
-                type="number"
-              />
-              {errors.retail_price && (
-                <FormErrorMessage>
-                  {errors.retail_price.message}
-                </FormErrorMessage>
+              {errors.location && (
+                <FormErrorMessage>{errors.location.message}</FormErrorMessage>
               )}
             </FormControl>
           </ModalBody>
@@ -130,7 +134,7 @@ const EditItem = ({ item, isOpen, onClose }: EditItemProps) => {
               variant="primary"
               type="submit"
               isLoading={isSubmitting}
-              isDisabled={!isDirty}
+              isDisabled={isEdit && !isDirty}
             >
               Save
             </Button>
@@ -142,4 +146,4 @@ const EditItem = ({ item, isOpen, onClose }: EditItemProps) => {
   );
 };
 
-export default EditItem;
+export default WarehouseForm;

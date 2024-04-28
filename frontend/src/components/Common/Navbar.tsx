@@ -1,9 +1,9 @@
 import { Button, Flex, Icon, useDisclosure } from "@chakra-ui/react";
 import { FaPlus } from "react-icons/fa";
 
-import AddItem from "../Items/AddItem";
-import AddWarehouse from "../Warehouses/AddWarehouses";
-import AddUser from "../Users/AddUser";
+import WarehouseForm from "../Warehouses/WarehouseForm";
+import UserForm from "../Users/UserForm";
+import ItemForm from "../Items/ItemForm";
 
 interface NavbarProps {
   type: string;
@@ -38,12 +38,17 @@ const Navbar = ({ type }: NavbarProps) => {
         >
           <Icon as={FaPlus} /> Add {type}
         </Button>
-        <AddUser isOpen={addUserModal.isOpen} onClose={addUserModal.onClose} />
-        <AddWarehouse
+        <UserForm
+          mode="add"
+          isOpen={addUserModal.isOpen}
+          onClose={addUserModal.onClose}
+        />
+        <WarehouseForm
+          mode="add"
           isOpen={addWarehouseModal.isOpen}
           onClose={addWarehouseModal.onClose}
         />
-        <AddItem isOpen={addItemModal.isOpen} onClose={addItemModal.onClose} />
+        <ItemForm mode="add" isOpen={addItemModal.isOpen} onClose={addItemModal.onClose} />
       </Flex>
     </>
   );

@@ -5,25 +5,25 @@ import {
   MenuItem,
   MenuList,
   useDisclosure,
-} from "@chakra-ui/react"
-import { BsThreeDotsVertical } from "react-icons/bs"
-import { FiEdit, FiTrash } from "react-icons/fi"
+} from "@chakra-ui/react";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { FiEdit, FiTrash } from "react-icons/fi";
 
-import type { ItemPublic, UserPublic, WarehousePublic } from "../../client"
-import EditItem from "../Items/EditItem"
-import Delete from "./DeleteAlert"
-import EditWarehouse from "../Warehouses/EditWarehouses"
-import EditUser from "../Users/EditUser"
+import type { ItemPublic, UserPublic, WarehousePublic } from "../../client";
+import Delete from "./DeleteAlert";
+import WarehouseForm from "../Warehouses/WarehouseForm";
+import UserForm from "../Users/UserForm";
+import ItemForm from "../Items/ItemForm";
 
 interface ActionsMenuProps {
-  type: string
-  value: ItemPublic | UserPublic | WarehousePublic
-  disabled?: boolean
+  type: string;
+  value: ItemPublic | UserPublic | WarehousePublic;
+  disabled?: boolean;
 }
 
 const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
-  const editUserModal = useDisclosure()
-  const deleteModal = useDisclosure()
+  const editUserModal = useDisclosure();
+  const deleteModal = useDisclosure();
 
   return (
     <>
@@ -50,19 +50,22 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
           </MenuItem>
         </MenuList>
         {type === "User" ? (
-          <EditUser
+          <UserForm
+            mode="edit"
             user={value as UserPublic}
             isOpen={editUserModal.isOpen}
             onClose={editUserModal.onClose}
           />
         ) : type == "Item" ? (
-          <EditItem
+          <ItemForm
+            mode="edit"
             item={value as ItemPublic}
             isOpen={editUserModal.isOpen}
             onClose={editUserModal.onClose}
           />
-        ): (
-          <EditWarehouse
+        ) : (
+          <WarehouseForm
+            mode="edit"
             warehouse={value as WarehousePublic}
             isOpen={editUserModal.isOpen}
             onClose={editUserModal.onClose}
@@ -76,7 +79,7 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
         />
       </Menu>
     </>
-  )
-}
+  );
+};
 
-export default ActionsMenu
+export default ActionsMenu;
