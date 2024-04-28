@@ -22,6 +22,10 @@ import type {
   WarehousePublic,
   WarehousesPublic,
   WarehouseUpdate,
+  StoreCreate,
+  StorePublic,
+  StoresPublic,
+  StoreUpdate,
 } from "./models";
 
 export type TDataLoginAccessToken = {
@@ -582,7 +586,7 @@ export class WarehousesService {
     const { id } = data;
     return __request(OpenAPI, {
       method: "GET",
-      url: "/api/v1/Warehouses/{id}",
+      url: "/api/v1/warehouses/{id}",
       path: {
         id,
       },
@@ -629,6 +633,138 @@ export class WarehousesService {
     return __request(OpenAPI, {
       method: "DELETE",
       url: "/api/v1/warehouses/{id}",
+      path: {
+        id,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+}
+
+export type TDataReadStores = {
+  limit?: number;
+  skip?: number;
+};
+export type TDataCreateStore = {
+  requestBody: StoreCreate;
+};
+export type TDataReadStore = {
+  id: number;
+};
+export type TDataUpdateStore = {
+  id: number;
+  requestBody: StoreUpdate;
+};
+export type TDataDeleteStore = {
+  id: number;
+};
+
+export class StoresService {
+  /**
+   * Read Stores
+   * Retrieve Stores.
+   * @returns StoresPublic Successful Response
+   * @throws ApiError
+   */
+  public static readStores(
+    data: TDataReadStores = {}
+  ): CancelablePromise<StoresPublic> {
+    const { limit = 100, skip = 0 } = data;
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/stores/",
+      query: {
+        skip,
+        limit,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Create Store
+   * Create new Store.
+   * @returns StorePublic Successful Response
+   * @throws ApiError
+   */
+  public static createStore(
+    data: TDataCreateStore
+  ): CancelablePromise<StorePublic> {
+    const { requestBody } = data;
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/stores/",
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Read Store
+   * Get Store by ID.
+   * @returns StorePublic Successful Response
+   * @throws ApiError
+   */
+  public static readStore(
+    data: TDataReadStore
+  ): CancelablePromise<StorePublic> {
+    const { id } = data;
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/stores/{id}",
+      path: {
+        id,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Update Store
+   * Update a Store.
+   * @returns StorePublic Successful Response
+   * @throws ApiError
+   */
+  public static updateStore(
+    data: TDataUpdateStore
+  ): CancelablePromise<StorePublic> {
+    const { id, requestBody } = data;
+    return __request(OpenAPI, {
+      method: "PUT",
+      url: "/api/v1/stores/{id}",
+      path: {
+        id,
+      },
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Delete Store
+   * Delete a Store.
+   * @returns Message Successful Response
+   * @throws ApiError
+   */
+  public static deleteStore(
+    data: TDataDeleteStore
+  ): CancelablePromise<Message> {
+    const { id } = data;
+    return __request(OpenAPI, {
+      method: "DELETE",
+      url: "/api/v1/stores/{id}",
       path: {
         id,
       },

@@ -127,6 +127,40 @@ class WarehousesPublic(SQLModel):
     data: list[WarehousePublic]
     count: int
 
+# Store model, database table inferred from class name
+# Shared properties
+class StoreBase(SQLModel):
+    name: str
+    location: str
+
+
+# Properties to receive on store creation
+class StoreCreate(StoreBase):
+    name: str
+    location: str
+
+
+# Properties to receive on store update
+class StoreUpdate(StoreBase):
+    name: str | None = None  # type: ignore
+    location: str | None = None  # type: ignore    
+
+
+# Database model, database table inferred from class name
+class Store(StoreBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    name: str
+
+
+# Properties to return via API, id is always required
+class StorePublic(StoreBase):
+    id: int
+
+
+class StoresPublic(SQLModel):
+    data: list[StorePublic]
+    count: int
+
 
 # Generic message
 class Message(SQLModel):

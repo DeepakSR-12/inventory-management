@@ -1,6 +1,7 @@
 import { Button, Flex, Icon, useDisclosure } from "@chakra-ui/react";
 import { FaPlus } from "react-icons/fa";
 
+import StoreForm from "../Stores/StoreForm"
 import WarehouseForm from "../Warehouses/WarehouseForm";
 import UserForm from "../Users/UserForm";
 import ItemForm from "../Items/ItemForm";
@@ -13,6 +14,7 @@ const Navbar = ({ type }: NavbarProps) => {
   const addUserModal = useDisclosure();
   const addItemModal = useDisclosure();
   const addWarehouseModal = useDisclosure();
+  const addStoreModal = useDisclosure();
 
   return (
     <>
@@ -33,7 +35,9 @@ const Navbar = ({ type }: NavbarProps) => {
               ? addUserModal.onOpen
               : type === "Item"
                 ? addItemModal.onOpen
-                : addWarehouseModal.onOpen
+                : type === "Warehouse"
+                  ? addWarehouseModal.onOpen
+                  : addStoreModal.onOpen
           }
         >
           <Icon as={FaPlus} /> Add {type}
@@ -48,7 +52,16 @@ const Navbar = ({ type }: NavbarProps) => {
           isOpen={addWarehouseModal.isOpen}
           onClose={addWarehouseModal.onClose}
         />
-        <ItemForm mode="add" isOpen={addItemModal.isOpen} onClose={addItemModal.onClose} />
+        <StoreForm
+          mode="add"
+          isOpen={addStoreModal.isOpen}
+          onClose={addStoreModal.onClose}
+        />
+        <ItemForm
+          mode="add"
+          isOpen={addItemModal.isOpen}
+          onClose={addItemModal.onClose}
+        />
       </Flex>
     </>
   );
