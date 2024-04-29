@@ -102,11 +102,12 @@ function Warehouses() {
   } else {
     return (
       <Container maxW="full">
-        <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
+        <Heading size="lg" textAlign="center" pt={12}>
           Warehouses Management
         </Heading>
-
-        <Navbar type={"Warehouse"} />
+        <Flex justifyContent={"flex-end"}>
+          <Navbar type={"Warehouse"} />
+        </Flex>
         <WarehousesTable />
       </Container>
     );

@@ -9,21 +9,6 @@ from app.models import WarehouseItemsById, WarehouseItemsByIdCreate, WarehouseIt
 router = APIRouter()
 
 
-# @router.get("/", response_model=WarehouseItemsByIdsPublic)
-# def read_warehouses(
-#     session: SessionDep, skip: int = 0, limit: int = 100
-# ) -> Any:
-#     """
-#     Retrieve warehouse items.
-#     """
-    # count_statement = select(func.count()).select_from(WarehouseItemsById)
-    # count = session.exec(count_statement).one()
-    # statement = select(WarehouseItemsById).offset(skip).limit(limit)
-    # warehouse_items = session.exec(statement).all()
-
-    # return WarehouseItemsByIdsPublic(data=warehouse_items, count=count)
-
-
 @router.get("/{id}", response_model=WarehouseItemsByIdsPublic)
 def read_warehouse_items_by_id(session: SessionDep, id: int, skip: int = 0, limit: int = 100) -> Any:
     """
@@ -40,33 +25,6 @@ def read_warehouse_items_by_id(session: SessionDep, id: int, skip: int = 0, limi
     # Return the records in an array
     return WarehouseItemsByIdsPublic(data=warehouse_items, count=count)
 
-# @router.post("/", response_model=WarehouseItemsByIdPublic)
-# def add_items_to_warehouse(session: SessionDep, warehouse_item: WarehouseItemsByIdCreate) -> Any:
-#     """
-#     Add an item to a warehouse.
-#     """
-#     # Check if the item already exists in this warehouse
-#     existing_warehouse_item = session.query(WarehouseItemsById).filter_by(
-#         warehouse_id=warehouse_item.warehouse_id, 
-#         item_id=warehouse_item.item_id
-#     ).first()
-
-#     if existing_warehouse_item:
-#         # If the item already exists, update its quantity
-#         existing_warehouse_item.quantity += warehouse_item.quantity
-#         session.commit() # Save the changes to the database
-#         session.refresh(existing_warehouse_item) # Refresh the instance with new database values
-#         return existing_warehouse_item
-    
-#     # If the item is new, add it
-#     # new_warehouse_item = WarehouseItemsById(**warehouse_item.dict())
-#     warehouse_item_with_id = WarehouseItemsById.model_validate(warehouse_item)
-#     session.add(warehouse_item_with_id) # Add new item to the session
-#     session.commit() # Save it to the database
-#     session.refresh(warehouse_item_with_id) # Refresh the instance with new database values
-
-#     return warehouse_item_with_id
-
 @router.post("/", response_model=WarehouseItemsByIdPublic)
 def add_items_to_warehouse(session: SessionDep, warehouse_item: WarehouseItemsByIdCreate) -> Any:
     """
@@ -79,7 +37,7 @@ def add_items_to_warehouse(session: SessionDep, warehouse_item: WarehouseItemsBy
     ).first()
 
     if existing_warehouse_item:
-        # If the item already exists, update its quantity
+        # If the item already exists, replace its quantity
         existing_warehouse_item.quantity += warehouse_item.quantity
         session.commit() # Save the changes to the database
         session.refresh(existing_warehouse_item) # Refresh the instance with new database values
@@ -94,49 +52,34 @@ def add_items_to_warehouse(session: SessionDep, warehouse_item: WarehouseItemsBy
     return new_warehouse_item
 
 
+@router.put("/{id}", response_model=WarehouseItemsByIdPublic)
+def update_warehouse_item(
+    *, session: SessionDep, id: int, warehouse_in: WarehouseItemsById
+) -> Any:
+    """
+    Update an warehouse item.
+    """
+    warehouse_item = session.get(WarehouseItemsById, id)
+    if not warehouse_item:
+        raise HTTPException(status_code=404, detail="Warehouse Item not found")
 
-# @router.post("/", response_model=WarehousePublic)
-# def create_warehouse(
-#     *, session: SessionDep, warehouse_in: WarehouseCreate
-# ) -> Any:
-#     """
-#     Create new warehouse.
-#     """
-#     warehouse = Warehouse.model_validate(warehouse_in)
-#     session.add(warehouse)
-#     session.commit()
-#     session.refresh(warehouse)
-#     return warehouse
-
-
-# @router.put("/{id}", response_model=WarehousePublic)
-# def update_warehouse(
-#     *, session: SessionDep, id: int, warehouse_in: WarehouseUpdate
-# ) -> Any:
-#     """
-#     Update an warehouse.
-#     """
-#     warehouse = session.get(Warehouse, id)
-#     if not warehouse:
-#         raise HTTPException(status_code=404, detail="Warehouse not found")
-
-#     update_dict = warehouse_in.model_dump(exclude_unset=True)
-#     warehouse.sqlmodel_update(update_dict)
-#     session.add(warehouse)
-#     session.commit()
-#     session.refresh(warehouse)
-#     return warehouse
+    update_dict = warehouse_in.model_dump(exclude_unset=True)
+    warehouse_item.sqlmodel_update(update_dict)
+    session.add(warehouse_item)
+    session.commit()
+    session.refresh(warehouse_item)
+    return warehouse_item
 
 
-# @router.delete("/{id}")
-# def delete_warehouse(session: SessionDep, id: int) -> Message:
-#     """
-#     Delete an warehouse.
-#     """
-#     warehouse = session.get(Warehouse, id)
-#     if not warehouse:
-#         raise HTTPException(status_code=404, detail="Warehouse not found")
+@router.delete("/{id}")
+def delete_warehouse_item(session: SessionDep, id: int) -> Message:
+    """
+    Delete a warehouse item.
+    """
+    warehouse_item = session.get(WarehouseItemsById, id)
+    if not warehouse_item:
+        raise HTTPException(status_code=404, detail="Warehouse item not found")
 
-#     session.delete(warehouse)
-#     session.commit()
-#     return Message(message="Warehouse deleted successfully")
+    session.delete(warehouse_item)
+    session.commit()
+    return Message(message="Warehouse item deleted successfully")

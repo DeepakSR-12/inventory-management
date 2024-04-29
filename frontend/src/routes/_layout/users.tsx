@@ -96,10 +96,12 @@ function Users() {
   } else {
     return (
       <Container maxW="full">
-        <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
+        <Heading size="lg" textAlign="center" pt={12}>
           User Management
         </Heading>
-        <Navbar type={"User"} />
+        <Flex justifyContent={"flex-end"}>
+          <Navbar type={"User"} />
+        </Flex>
         <TableContainer>
           <Table fontSize="md" size={{ base: "sm", md: "md" }}>
             <Thead>

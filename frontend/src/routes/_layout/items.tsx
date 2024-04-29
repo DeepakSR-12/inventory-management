@@ -104,11 +104,12 @@ export default function Items() {
   } else {
     return (
       <Container maxW="full">
-        <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
+        <Heading size="lg" textAlign="center" pt={12}>
           Items Management
         </Heading>
-
-        <Navbar type={"Item"} />
+        <Flex justifyContent={"flex-end"}>
+          <Navbar type={"Item"} />
+        </Flex>
         <ItemsTable />
       </Container>
     );

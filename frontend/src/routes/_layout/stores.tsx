@@ -102,11 +102,12 @@ import useAuth from "../../hooks/useAuth";
   } else {
     return (
       <Container maxW="full">
-        <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
+        <Heading size="lg" textAlign="center" pt={12}>
           Stores Management
         </Heading>
-  
-        <Navbar type={"Store"} />
+        <Flex justifyContent={"flex-end"}>
+          <Navbar type={"Store"} />
+        </Flex>
         <StoresTable />
       </Container>
     );

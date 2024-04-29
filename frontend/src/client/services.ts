@@ -28,6 +28,11 @@ import type {
   StoresPublic,
   StoreUpdate,
   WarehouseItemsByIdsPublic,
+  WarehouseItemsByIdCreate,
+  WarehouseItemsByIdUpdate,
+  StoreItemsByIdsPublic,
+  StoreItemsByIdCreate,
+  StoreItemsByIdPublic,
 } from "./models";
 
 export type TDataLoginAccessToken = {
@@ -646,32 +651,29 @@ export class WarehousesService {
   }
 }
 
-
 export type TDataReadWarehouseItemsById = {
   id: number;
   limit?: number;
   skip?: number;
 };
-// export type TDataCreateWarehouse = {
-//   requestBody: WarehouseCreate;
-// };
-// export type TDataReadWarehouse = {
-//   id: number;
-// };
-// export type TDataUpdateWarehouse = {
-//   id: number;
-//   requestBody: WarehouseUpdate;
-// };
-// export type TDataDeleteWarehouse = {
-//   id: number;
-// };
+export type TDataReceiveWarehouseItemsById = {
+  requestBody: WarehouseItemsByIdCreate;
+};
+
+export type TDataUpdateWarehouseItemById = {
+  id: number;
+  requestBody: WarehouseItemsByIdUpdate;
+};
+export type TDataDeleteWarehouseItemById = {
+  id: number;
+};
 
 // Warehouse By Id Service
 export class WarehouseItemsByIdService {
   /**
    * Read Warehouses By Id
-   * Retrieve Warehouses.
-   * @returns WarehousesPublic Successful Response
+   * Retrieve Warehouses By Id.
+   * @returns WarehouseItemsByIdsPublic Successful Response
    * @throws ApiError
    */
   public static readWarehouseItemsById(
@@ -694,96 +696,73 @@ export class WarehouseItemsByIdService {
     });
   }
 
-  // /**
-  //  * Create Warehouse
-  //  * Create new warehouse.
-  //  * @returns WarehousePublic Successful Response
-  //  * @throws ApiError
-  //  */
-  // public static createWarehouse(
-  //   data: TDataCreateWarehouse
-  // ): CancelablePromise<WarehousePublic> {
-  //   const { requestBody } = data;
-  //   return __request(OpenAPI, {
-  //     method: "POST",
-  //     url: "/api/v1/warehouses/",
-  //     body: requestBody,
-  //     mediaType: "application/json",
-  //     errors: {
-  //       422: `Validation Error`,
-  //     },
-  //   });
-  // }
+  /**
+   * Create Warehouse
+   * Create new warehouse.
+   * @returns WarehousePublic Successful Response
+   * @throws ApiError
+   */
+  public static receiveWarehouseItemsById(
+    data: TDataReceiveWarehouseItemsById
+  ): CancelablePromise<WarehouseItemsByIdPublic> {
+    const { requestBody } = data;
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/warehouseitems/",
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
 
-  // /**
-  //  * Read Warehouse
-  //  * Get Warehouse by ID.
-  //  * @returns WarehousePublic Successful Response
-  //  * @throws ApiError
-  //  */
-  // public static readWarehouse(
-  //   data: TDataReadWarehouse
-  // ): CancelablePromise<WarehousePublic> {
-  //   const { id } = data;
-  //   return __request(OpenAPI, {
-  //     method: "GET",
-  //     url: "/api/v1/warehouses/{id}",
-  //     path: {
-  //       id,
-  //     },
-  //     errors: {
-  //       422: `Validation Error`,
-  //     },
-  //   });
-  // }
+  /**
+   * Update Warehouse Items by ID.
+   * Update a warehouse item.
+   * @returns WarehouseItemsByIdPublic Successful Response
+   * @throws ApiError
+   */
+  public static updateWarehouseItemsById(
+    data: TDataUpdateWarehouseItemById
+  ): CancelablePromise<WarehouseItemsByIdPublic> {
+    const { id, requestBody } = data;
+    return __request(OpenAPI, {
+      method: "PUT",
+      url: "/api/v1/warehouseitems/{id}",
+      path: {
+        id,
+      },
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
 
-  // /**
-  //  * Update Warehouse
-  //  * Update a warehouse.
-  //  * @returns WarehousePublic Successful Response
-  //  * @throws ApiError
-  //  */
-  // public static updateWarehouse(
-  //   data: TDataUpdateWarehouse
-  // ): CancelablePromise<WarehousePublic> {
-  //   const { id, requestBody } = data;
-  //   return __request(OpenAPI, {
-  //     method: "PUT",
-  //     url: "/api/v1/warehouses/{id}",
-  //     path: {
-  //       id,
-  //     },
-  //     body: requestBody,
-  //     mediaType: "application/json",
-  //     errors: {
-  //       422: `Validation Error`,
-  //     },
-  //   });
-  // }
-
-  // /**
-  //  * Delete Warehouse
-  //  * Delete a warehouse.
-  //  * @returns Message Successful Response
-  //  * @throws ApiError
-  //  */
-  // public static deleteWarehouse(
-  //   data: TDataDeleteWarehouse
-  // ): CancelablePromise<Message> {
-  //   const { id } = data;
-  //   return __request(OpenAPI, {
-  //     method: "DELETE",
-  //     url: "/api/v1/warehouses/{id}",
-  //     path: {
-  //       id,
-  //     },
-  //     errors: {
-  //       422: `Validation Error`,
-  //     },
-  //   });
-  // }
+  /**
+   * Delete Warehouse Item by ID.
+   * Delete a warehouse item.
+   * @returns Message Successful Response
+   * @throws ApiError
+   */
+  public static deleteWarehouseItemById(
+    data: TDataDeleteWarehouseItemById
+  ): CancelablePromise<Message> {
+    const { id } = data;
+    return __request(OpenAPI, {
+      method: "DELETE",
+      url: "/api/v1/warehouseitems/{id}",
+      path: {
+        id,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
 }
-
 
 // Stores Service
 export type TDataReadStores = {
@@ -817,7 +796,7 @@ export class StoresService {
     const { limit = 100, skip = 0 } = data;
     return __request(OpenAPI, {
       method: "GET",
-      url: "/api/v1/stores/",
+      url: "/api/v1/stores",
       query: {
         skip,
         limit,
@@ -840,7 +819,7 @@ export class StoresService {
     const { requestBody } = data;
     return __request(OpenAPI, {
       method: "POST",
-      url: "/api/v1/stores/",
+      url: "/api/v1/stores",
       body: requestBody,
       mediaType: "application/json",
       errors: {
@@ -916,4 +895,134 @@ export class StoresService {
       },
     });
   }
+}
+
+export type TDataReadStoreItemsById = {
+  id: number;
+  limit?: number;
+  skip?: number;
+};
+export type TDataShipItemsById = {
+  requestBody: StoreItemsByIdCreate;
+  previousQuantity: number;
+  id: number;
+};
+
+// export type TDataUpdateStoreItemById = {
+//   id: number;
+//   requestBody: StoreItemsByIdUpdate;
+// };
+// export type TDataDeleteStoreItemById = {
+//   id: number;
+// };
+
+// StoreItems By Id Service
+export class StoreItemsByIdService {
+  /**
+   * Read Stores By Id
+   * Retrieve Stores By Id.
+   * @returns StoreItemsByIdsPublic Successful Response
+   * @throws ApiError
+   */
+  public static readStoreItemsById(
+    data: TDataReadStoreItemsById
+  ): CancelablePromise<StoreItemsByIdsPublic> {
+    const { id, limit = 100, skip = 0 } = data;
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/storeitems/{id}",
+      path: {
+        id,
+      },
+      query: {
+        skip,
+        limit,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * rece Warehouse
+   * Create new warehouse.
+   * @returns WarehousePublic Successful Response
+   * @throws ApiError
+   */
+  public static shipItemsById(
+    data: TDataShipItemsById
+  ): CancelablePromise<StoreItemsByIdPublic> {
+    const { requestBody, previousQuantity, id } = data;    
+    const updateBody = {...requestBody, quantity: previousQuantity - requestBody.quantity}
+
+    __request(OpenAPI, {
+      method: "PUT",
+      url: "/api/v1/warehouseitems/{id}",
+      path: {
+        id: id,
+      },
+      body: updateBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/storeitems",
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  // /**
+  //  * Update Warehouse Items by ID.
+  //  * Update a warehouse item.
+  //  * @returns WarehouseItemsByIdPublic Successful Response
+  //  * @throws ApiError
+  //  */
+  // public static updateWarehouseItemsById(
+  //   data: TDataUpdateWarehouseItemById
+  // ): CancelablePromise<WarehouseItemsByIdPublic> {
+  //   const { id, requestBody } = data;
+  //   return __request(OpenAPI, {
+  //     method: "PUT",
+  //     url: "/api/v1/warehouseitems/{id}",
+  //     path: {
+  //       id,
+  //     },
+  //     body: requestBody,
+  //     mediaType: "application/json",
+  //     errors: {
+  //       422: `Validation Error`,
+  //     },
+  //   });
+  // }
+
+  // /**
+  //  * Delete Warehouse Item by ID.
+  //  * Delete a warehouse item.
+  //  * @returns Message Successful Response
+  //  * @throws ApiError
+  //  */
+  // public static deleteWarehouseItemById(
+  //   data: TDataDeleteWarehouseItemById
+  // ): CancelablePromise<Message> {
+  //   const { id } = data;
+  //   return __request(OpenAPI, {
+  //     method: "DELETE",
+  //     url: "/api/v1/warehouseitems/{id}",
+  //     path: {
+  //       id,
+  //     },
+  //     errors: {
+  //       422: `Validation Error`,
+  //     },
+  //   });
+  // }
 }

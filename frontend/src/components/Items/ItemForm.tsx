@@ -106,6 +106,7 @@ import {
                   {...register("warehouse_price", { valueAsNumber: true })}
                   placeholder="Warehouse Price"
                   type="number"
+                  min={0}
                 />
                 {errors.warehouse_price && (
                   <FormErrorMessage>{errors.warehouse_price.message}</FormErrorMessage>
@@ -118,6 +119,7 @@ import {
                   {...register("retail_price", { valueAsNumber: true })}
                   placeholder="Retail Price"
                   type="number"
+                  min={0}
                 />
                 {errors.retail_price && (
                   <FormErrorMessage>{errors.retail_price.message}</FormErrorMessage>

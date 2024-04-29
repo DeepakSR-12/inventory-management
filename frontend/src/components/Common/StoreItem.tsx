@@ -21,39 +21,41 @@ import {
   Tr,
   Box,
 } from "@chakra-ui/react";
-import { WarehouseItemsByIdService, WarehousePublic } from "../../client";
+import { StoreItemsByIdService, StorePublic } from "../../client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import ActionsMenu from "./ActionsMenu";
 import { ErrorBoundary } from "react-error-boundary";
 import { Suspense } from "react";
 import Navbar from "./Navbar";
 
-interface WarehousesItemsProps {
-  warehouse: WarehousePublic;
+interface StoresItemsProps {
+  store: StorePublic;
   isOpen: boolean;
   onClose: () => void;
 }
 
-function WarehousesItemsTableBody({ id }: { id: number }) {
-  const { data: warehouseItems } = useSuspenseQuery({
-    queryKey: ["warehouseItemsById"],
-    queryFn: () => WarehouseItemsByIdService.readWarehouseItemsById({ id }),
+function StoresItemsTableBody({ id }: { id: number }) {
+  const { data: storeItems } = useSuspenseQuery({
+    queryKey: ["storeItemsById"],
+    queryFn: () => StoreItemsByIdService.readStoreItemsById({ id }),
   });
+
+  console.log({ storeItems });
 
   return (
     <>
-      {!!warehouseItems?.data?.length ? (
+      {!!storeItems?.data?.length ? (
         <Tbody>
-          {warehouseItems.data.map((warehouseItem, index) => (
+          {storeItems.data.map((storeItem, index) => (
             <Tr key={index}>
-              <Td>{warehouseItem.id}</Td>
-              <Td>{warehouseItem.item_name}</Td>
-              <Td>{warehouseItem.item_id}</Td>
-              <Td>{warehouseItem.warehouse_price}</Td>
-              <Td>{warehouseItem.retail_price}</Td>
-              <Td>{warehouseItem.quantity}</Td>
+              <Td>{storeItem.id}</Td>
+              <Td>{storeItem.item_name}</Td>
+              <Td>{storeItem.item_id}</Td>
+              <Td>{storeItem.warehouse_price}</Td>
+              <Td>{storeItem.retail_price}</Td>
+              <Td>{storeItem.quantity}</Td>
               <Td>
-                <ActionsMenu type={"WarehouseItem"} value={warehouseItem} />
+                <ActionsMenu type={"StoreItem"} value={storeItem} />
               </Td>
             </Tr>
           ))}
@@ -63,7 +65,7 @@ function WarehousesItemsTableBody({ id }: { id: number }) {
   );
 }
 
-function WarehousesItemsTable({ id }: { id: number }) {
+function StoresItemsTable({ id }: { id: number }) {
   return (
     <TableContainer>
       <Table size={{ base: "sm", md: "md" }}>
@@ -104,7 +106,7 @@ function WarehousesItemsTable({ id }: { id: number }) {
               </Tbody>
             }
           >
-            <WarehousesItemsTableBody id={id} />
+            <StoresItemsTableBody id={id} />
           </Suspense>
         </ErrorBoundary>
       </Table>
@@ -112,11 +114,7 @@ function WarehousesItemsTable({ id }: { id: number }) {
   );
 }
 
-const WarehousesItems = ({
-  warehouse,
-  isOpen,
-  onClose,
-}: WarehousesItemsProps) => {
+const StoresItems = ({ store, isOpen, onClose }: StoresItemsProps) => {
   const { user } = useAuth();
 
   if (!user?.is_superuser) {
@@ -128,9 +126,9 @@ const WarehousesItems = ({
         <ModalContent>
           <ModalCloseButton />
           <ModalHeader>
-          <Container maxW="container.md" py={10}>
+            <Container maxW="container.md" py={10}>
               <Heading as="h1" size="lg" mb={4} textAlign="center">
-                Warehouse Details
+                Store Details
               </Heading>
               <Box
                 border="1px"
@@ -145,7 +143,7 @@ const WarehousesItems = ({
                       Name:
                     </Heading>
                     <Text fontSize="lg" mb={2}>
-                      {warehouse.name}
+                      {store.name}
                     </Text>
                   </Box>
                   <Box>
@@ -153,15 +151,15 @@ const WarehousesItems = ({
                       Location:
                     </Heading>
                     <Text fontSize="lg" mb={2}>
-                      {warehouse.location}
+                      {store.location}
                     </Text>
                   </Box>
                   <Box>
                     <Heading as="h2" size="md" color="ui.main">
-                      Warehouse ID:
+                      Store ID:
                     </Heading>
                     <Text fontSize="lg" mb={2}>
-                      {warehouse.id}
+                      {store.id}
                     </Text>
                   </Box>
                 </Flex>
@@ -170,9 +168,9 @@ const WarehousesItems = ({
           </ModalHeader>
           <ModalBody pb={6}>
             <Flex justifyContent={"flex-end"}>
-              <Navbar type={"WarehouseItem"} id={warehouse.id} />
+              <Navbar type={"StoreItem"} id={store.id} />
             </Flex>
-            <WarehousesItemsTable id={warehouse.id} />
+            <StoresItemsTable id={store.id} />
           </ModalBody>
         </ModalContent>
       </Modal>
@@ -180,4 +178,4 @@ const WarehousesItems = ({
   }
 };
 
-export default WarehousesItems;
+export default StoresItems;

@@ -82,8 +82,9 @@ class ItemUpdate(ItemBase):
 
 class Item(ItemBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    # Relationship with WarehouseItem
+    # Relationships
     warehouse_items: list["WarehouseItemsById"] = Relationship(back_populates="item")
+    store_items: list["StoreItemsById"] = Relationship(back_populates="item")
 
 
 # Properties to return via API, id is always required
@@ -128,6 +129,7 @@ class WarehousesPublic(SQLModel):
     data: list[WarehousePublic]
     count: int
 
+# WarehouseItemsByIdBase
 class WarehouseItemsByIdBase(SQLModel):
     warehouse_id: int = Field(foreign_key="warehouse.id")
     item_id: int = Field(foreign_key="item.id")
@@ -136,7 +138,6 @@ class WarehouseItemsByIdBase(SQLModel):
     retail_price: float
     quantity: int
 
-# Properties to receive on warehouse creation
 class WarehouseItemsByIdCreate(WarehouseItemsByIdBase):
     warehouse_id: int = Field(foreign_key="warehouse.id")
     item_id: int = Field(foreign_key="item.id")
@@ -145,8 +146,6 @@ class WarehouseItemsByIdCreate(WarehouseItemsByIdBase):
     retail_price: float
     quantity: int
 
-
-# Properties to receive on warehouse update
 class WarehouseItemsByIdUpdate(WarehouseItemsByIdBase):
     quantity: int | None = None  # type: ignore    
 
@@ -185,6 +184,8 @@ class StoreUpdate(StoreBase):
 class Store(StoreBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str
+    # Relationship to StoreItemsById
+    items: list["StoreItemsById"] | None = Relationship(back_populates="store")
 
 
 # Properties to return via API, id is always required
@@ -196,6 +197,38 @@ class StoresPublic(SQLModel):
     data: list[StorePublic]
     count: int
 
+
+# StoreItemsByIdBase
+class StoreItemsByIdBase(SQLModel):
+    store_id: int = Field(foreign_key="store.id")
+    item_id: int = Field(foreign_key="item.id")
+    item_name: str
+    warehouse_price: float
+    retail_price: float
+    quantity: int
+
+class StoreItemsByIdCreate(StoreItemsByIdBase):
+    store_id: int = Field(foreign_key="store.id")
+    item_id: int = Field(foreign_key="item.id")
+    item_name: str
+    warehouse_price: float
+    retail_price: float
+    quantity: int
+
+class StoreItemsByIdUpdate(StoreItemsByIdBase):
+    quantity: int | None = None  # type: ignore    
+
+class StoreItemsById(StoreItemsByIdBase, table=True):    
+    id: int | None = Field(default=None, primary_key=True)
+    store: Store = Relationship(back_populates="items")
+    item: Item = Relationship(back_populates="store_items")
+
+class StoreItemsByIdPublic(StoreItemsByIdBase):
+    id: int    
+
+class StoreItemsByIdsPublic(SQLModel):    
+    data: list[StoreItemsByIdPublic]
+    count: int
 
 # Generic message
 class Message(SQLModel):

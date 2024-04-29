@@ -56,26 +56,34 @@ export type WarehousesPublic = {
   count: number;
 };
 
-export type WarehouseItemsByIdCreate = {
-  warehouse_id: number;
+export type WarehouseItemsByIdCreate = {  
   item_id: number;
   item_name: string;
   quantity: number;
   warehouse_price: number | null;
   retail_price: number | null;
+  warehouse_id?: number;
+  store_id?: number;
 };
 
-export type WarehouseItemsByIdPublic = {  
-  warehouse_id: number;
+export type WarehouseItemsByIdPublic = {
+  id: number;  
   item_id: number;
   item_name: string;
   quantity: number;
   warehouse_price: number | null;
   retail_price: number | null;
+  warehouse_id?: number;
+  store_id?: number;
 };
 
-export type WarehouseItemsByIdUpdate = {
+export type WarehouseItemsByIdUpdate = {  
+  item_id: number;
+  item_name: string;
   quantity: number;
+  warehouse_price: number | null;
+  retail_price: number | null;
+  warehouse_id?: number;
 };
 
 export type WarehouseItemsByIdsPublic = {
@@ -101,6 +109,41 @@ export type StoreUpdate = {
 
 export type StoresPublic = {
   data: Array<StorePublic>;
+  count: number;
+};
+
+export type StoreItemsByIdCreate = {  
+  item_id: number;
+  item_name: string;
+  quantity: number;
+  warehouse_price: number | null;
+  retail_price: number | null;
+  warehouse_id?: number;
+  store_id?: number;
+};
+
+export type StoreItemsByIdPublic = {
+  id: number;  
+  item_id: number;
+  item_name: string;
+  quantity: number;
+  warehouse_price: number | null;
+  retail_price: number | null;
+  warehouse_id?: number;
+  store_id?: number;
+};
+
+export type StoreItemsByIdUpdate = {
+  store_id: number;
+  item_id: number;
+  item_name: string;
+  quantity: number;
+  warehouse_price: number | null;
+  retail_price: number | null;
+};
+
+export type StoreItemsByIdsPublic = {
+  data: Array<StoreItemsByIdPublic>;
   count: number;
 };
 

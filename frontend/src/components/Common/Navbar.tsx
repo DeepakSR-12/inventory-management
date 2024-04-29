@@ -1,16 +1,18 @@
 import { Button, Flex, Icon, useDisclosure } from "@chakra-ui/react";
 import { FaPlus } from "react-icons/fa";
 
-import StoreForm from "../Stores/StoreForm"
+import StoreForm from "../Stores/StoreForm";
 import WarehouseForm from "../Warehouses/WarehouseForm";
 import UserForm from "../Users/UserForm";
 import ItemForm from "../Items/ItemForm";
+import WarehouseItemsForm from "../WarehouseItems/WarehouseItemsForm";
 
 interface NavbarProps {
   type: string;
+  id?: number;
 }
 
-const Navbar = ({ type }: NavbarProps) => {
+const Navbar = ({ type, id }: NavbarProps) => {
   const addUserModal = useDisclosure();
   const addItemModal = useDisclosure();
   const addWarehouseModal = useDisclosure();
@@ -21,13 +23,6 @@ const Navbar = ({ type }: NavbarProps) => {
   return (
     <>
       <Flex py={8} gap={4}>
-        {/* TODO: Complete search functionality */}
-        {/* <InputGroup w={{ base: '100%', md: 'auto' }}>
-                    <InputLeftElement pointerEvents='none'>
-                        <Icon as={FaSearch} color='ui.dim' />
-                    </InputLeftElement>
-                    <Input type='text' placeholder='Search' fontSize={{ base: 'sm', md: 'inherit' }} borderRadius='8px' />
-                </InputGroup> */}
         <Button
           variant="primary"
           gap={1}
@@ -39,10 +34,13 @@ const Navbar = ({ type }: NavbarProps) => {
                 ? addItemModal.onOpen
                 : type === "Warehouse"
                   ? addWarehouseModal.onOpen
-                  : addStoreModal.onOpen
+                  : type === "WarehouseItem"
+                    ? receiveItemModal.onOpen
+                    : addStoreModal.onOpen
           }
         >
-          <Icon as={FaPlus} /> Add {type}
+          <Icon as={FaPlus} />{" "}
+          {type === "WarehouseItem" ? "Receive Item" : `Add ${type}`}
         </Button>
         <UserForm
           mode="add"
@@ -53,6 +51,12 @@ const Navbar = ({ type }: NavbarProps) => {
           mode="add"
           isOpen={addWarehouseModal.isOpen}
           onClose={addWarehouseModal.onClose}
+        />
+        <WarehouseItemsForm
+          mode="add"
+          isOpen={receiveItemModal.isOpen}
+          onClose={receiveItemModal.onClose}
+          warehouseId={id}
         />
         <StoreForm
           mode="add"

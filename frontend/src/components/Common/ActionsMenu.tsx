@@ -7,10 +7,11 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { FiEdit, FiEye, FiTrash } from "react-icons/fi";
+import { FiEdit, FiEye, FiShoppingBag, FiTrash } from "react-icons/fi";
 
 import type {
   ItemPublic,
+  StoreItemsByIdPublic,
   StorePublic,
   UserPublic,
   WarehouseItemsByIdPublic,
@@ -21,11 +22,19 @@ import WarehouseForm from "../Warehouses/WarehouseForm";
 import StoreForm from "../Stores/StoreForm";
 import UserForm from "../Users/UserForm";
 import ItemForm from "../Items/ItemForm";
-import WarehousesById from "./warehouseItem";
+import WarehouseItemsForm from "../WarehouseItems/WarehouseItemsForm";
+import WarehousesItems from "./WarehouseItem";
+import StoresItems from "./StoreItem";
 
 interface ActionsMenuProps {
   type: string;
-  value: ItemPublic | UserPublic | WarehousePublic | StorePublic | WarehouseItemsByIdPublic;
+  value:
+    | ItemPublic
+    | UserPublic
+    | WarehousePublic
+    | StorePublic
+    | WarehouseItemsByIdPublic
+    | StoreItemsByIdPublic;
   disabled?: boolean;
 }
 
@@ -44,24 +53,33 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
           variant="unstyled"
         />
         <MenuList>
-          <MenuItem
-            onClick={viewUserModal.onOpen}
-            icon={<FiEye fontSize="16px" />}
-          >
-            View {type}
-          </MenuItem>
+          {type == "WarehouseItem" ? (
+            <MenuItem
+              onClick={viewUserModal.onOpen}
+              icon={<FiShoppingBag fontSize="16px" />}
+            >
+              Ship Warehouse Item
+            </MenuItem>
+          ) : (
+            <MenuItem
+              onClick={viewUserModal.onOpen}
+              icon={<FiEye fontSize="16px" />}
+            >
+              View {type}
+            </MenuItem>
+          )}
           <MenuItem
             onClick={editUserModal.onOpen}
             icon={<FiEdit fontSize="16px" />}
           >
-            Edit {type}
+            Edit {type === "WarehouseItem" ? "Warehouse Item" : type}
           </MenuItem>
           <MenuItem
             onClick={deleteModal.onOpen}
             icon={<FiTrash fontSize="16px" />}
             color="ui.danger"
           >
-            Delete {type}
+            Delete {type === "WarehouseItem" ? "Warehouse Item" : type}
           </MenuItem>
         </MenuList>
         {type === "User" ? (
@@ -85,6 +103,17 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
             isOpen={editUserModal.isOpen}
             onClose={editUserModal.onClose}
           />
+        ) : type == "WarehouseItem" ? (
+          <>
+            {!!editUserModal.isOpen ? (
+              <WarehouseItemsForm
+                mode="edit"
+                warehouseItem={value as WarehouseItemsByIdPublic}
+                isOpen={editUserModal.isOpen}
+                onClose={editUserModal.onClose}
+              />
+            ) : null}
+          </>
         ) : (
           <StoreForm
             mode="edit"
@@ -100,11 +129,30 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
           onClose={deleteModal.onClose}
         />
 
-        <WarehousesById
-          warehouse={value as WarehousePublic}
-          isOpen={viewUserModal.isOpen}
-          onClose={viewUserModal.onClose}
-        />
+        {!!viewUserModal.isOpen && type == "WarehouseItem" ? (
+          <WarehouseItemsForm
+            mode="ship"
+            warehouseItem={value as WarehouseItemsByIdPublic}
+            isOpen={viewUserModal.isOpen}
+            onClose={viewUserModal.onClose}
+          />
+        ) : null}
+
+        {!!viewUserModal.isOpen && type == "Warehouse" ? (
+          <WarehousesItems
+            warehouse={value as WarehousePublic}
+            isOpen={viewUserModal.isOpen}
+            onClose={viewUserModal.onClose}
+          />
+        ) : null}
+
+        {!!viewUserModal.isOpen && type == "Store" ? (
+          <StoresItems
+            store={value as StorePublic}
+            isOpen={viewUserModal.isOpen}
+            onClose={viewUserModal.onClose}
+          />
+        ) : null}
       </Menu>
     </>
   );
