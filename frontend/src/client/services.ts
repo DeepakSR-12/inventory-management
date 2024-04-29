@@ -22,10 +22,12 @@ import type {
   WarehousePublic,
   WarehousesPublic,
   WarehouseUpdate,
+  WarehouseItemsByIdPublic,
   StoreCreate,
   StorePublic,
   StoresPublic,
   StoreUpdate,
+  WarehouseItemsByIdsPublic,
 } from "./models";
 
 export type TDataLoginAccessToken = {
@@ -511,6 +513,7 @@ export class ItemsService {
   }
 }
 
+// Warehouses Service
 export type TDataReadWarehouses = {
   limit?: number;
   skip?: number;
@@ -643,6 +646,146 @@ export class WarehousesService {
   }
 }
 
+
+export type TDataReadWarehouseItemsById = {
+  id: number;
+  limit?: number;
+  skip?: number;
+};
+// export type TDataCreateWarehouse = {
+//   requestBody: WarehouseCreate;
+// };
+// export type TDataReadWarehouse = {
+//   id: number;
+// };
+// export type TDataUpdateWarehouse = {
+//   id: number;
+//   requestBody: WarehouseUpdate;
+// };
+// export type TDataDeleteWarehouse = {
+//   id: number;
+// };
+
+// Warehouse By Id Service
+export class WarehouseItemsByIdService {
+  /**
+   * Read Warehouses By Id
+   * Retrieve Warehouses.
+   * @returns WarehousesPublic Successful Response
+   * @throws ApiError
+   */
+  public static readWarehouseItemsById(
+    data: TDataReadWarehouseItemsById
+  ): CancelablePromise<WarehouseItemsByIdsPublic> {
+    const { id, limit = 100, skip = 0 } = data;
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/warehouseitems/{id}",
+      path: {
+        id,
+      },
+      query: {
+        skip,
+        limit,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  // /**
+  //  * Create Warehouse
+  //  * Create new warehouse.
+  //  * @returns WarehousePublic Successful Response
+  //  * @throws ApiError
+  //  */
+  // public static createWarehouse(
+  //   data: TDataCreateWarehouse
+  // ): CancelablePromise<WarehousePublic> {
+  //   const { requestBody } = data;
+  //   return __request(OpenAPI, {
+  //     method: "POST",
+  //     url: "/api/v1/warehouses/",
+  //     body: requestBody,
+  //     mediaType: "application/json",
+  //     errors: {
+  //       422: `Validation Error`,
+  //     },
+  //   });
+  // }
+
+  // /**
+  //  * Read Warehouse
+  //  * Get Warehouse by ID.
+  //  * @returns WarehousePublic Successful Response
+  //  * @throws ApiError
+  //  */
+  // public static readWarehouse(
+  //   data: TDataReadWarehouse
+  // ): CancelablePromise<WarehousePublic> {
+  //   const { id } = data;
+  //   return __request(OpenAPI, {
+  //     method: "GET",
+  //     url: "/api/v1/warehouses/{id}",
+  //     path: {
+  //       id,
+  //     },
+  //     errors: {
+  //       422: `Validation Error`,
+  //     },
+  //   });
+  // }
+
+  // /**
+  //  * Update Warehouse
+  //  * Update a warehouse.
+  //  * @returns WarehousePublic Successful Response
+  //  * @throws ApiError
+  //  */
+  // public static updateWarehouse(
+  //   data: TDataUpdateWarehouse
+  // ): CancelablePromise<WarehousePublic> {
+  //   const { id, requestBody } = data;
+  //   return __request(OpenAPI, {
+  //     method: "PUT",
+  //     url: "/api/v1/warehouses/{id}",
+  //     path: {
+  //       id,
+  //     },
+  //     body: requestBody,
+  //     mediaType: "application/json",
+  //     errors: {
+  //       422: `Validation Error`,
+  //     },
+  //   });
+  // }
+
+  // /**
+  //  * Delete Warehouse
+  //  * Delete a warehouse.
+  //  * @returns Message Successful Response
+  //  * @throws ApiError
+  //  */
+  // public static deleteWarehouse(
+  //   data: TDataDeleteWarehouse
+  // ): CancelablePromise<Message> {
+  //   const { id } = data;
+  //   return __request(OpenAPI, {
+  //     method: "DELETE",
+  //     url: "/api/v1/warehouses/{id}",
+  //     path: {
+  //       id,
+  //     },
+  //     errors: {
+  //       422: `Validation Error`,
+  //     },
+  //   });
+  // }
+}
+
+
+// Stores Service
 export type TDataReadStores = {
   limit?: number;
   skip?: number;

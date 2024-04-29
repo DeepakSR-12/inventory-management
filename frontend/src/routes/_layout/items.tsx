@@ -96,7 +96,7 @@ function ItemsTable() {
   );
 }
 
-function Items() {
+export default function Items() {
   const { user } = useAuth();
 
   if (!user?.is_superuser) {

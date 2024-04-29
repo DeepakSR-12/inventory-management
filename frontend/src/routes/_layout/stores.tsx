@@ -106,7 +106,7 @@ import useAuth from "../../hooks/useAuth";
           Stores Management
         </Heading>
   
-        <Navbar type={"Stores"} />
+        <Navbar type={"Store"} />
         <StoresTable />
       </Container>
     );

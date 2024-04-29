@@ -1,5 +1,7 @@
 from sqlmodel import Field, Relationship, SQLModel
+from sqlalchemy.orm import registry
 
+mapper_registry = registry()
 
 # Shared properties
 # TODO replace email str with EmailStr when sqlmodel supports it
@@ -78,10 +80,10 @@ class ItemUpdate(ItemBase):
     retail_price: float | None = None  # type: ignore
 
 
-# Database model, database table inferred from class name
 class Item(ItemBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    name: str
+    # Relationship with WarehouseItem
+    warehouse_items: list["WarehouseItemsById"] = Relationship(back_populates="item")
 
 
 # Properties to return via API, id is always required
@@ -97,7 +99,7 @@ class ItemsPublic(SQLModel):
 # Shared properties
 class WarehouseBase(SQLModel):
     name: str
-    location: str
+    location: str    
 
 
 # Properties to receive on warehouse creation
@@ -112,19 +114,52 @@ class WarehouseUpdate(WarehouseBase):
     location: str | None = None  # type: ignore    
 
 
-# Database model, database table inferred from class name
-class Warehouse(WarehouseBase, table=True):
+# Definition of the Warehouse model
+class Warehouse(WarehouseBase, table=True):    
     id: int | None = Field(default=None, primary_key=True)
-    name: str
+    # Relationship to WarehouseItem
+    items: list["WarehouseItemsById"] | None = Relationship(back_populates="warehouse")
 
-
-# Properties to return via API, id is always required
 class WarehousePublic(WarehouseBase):
-    id: int
+    id: int    
 
 
 class WarehousesPublic(SQLModel):
     data: list[WarehousePublic]
+    count: int
+
+class WarehouseItemsByIdBase(SQLModel):
+    warehouse_id: int = Field(foreign_key="warehouse.id")
+    item_id: int = Field(foreign_key="item.id")
+    item_name: str
+    warehouse_price: float
+    retail_price: float
+    quantity: int
+
+# Properties to receive on warehouse creation
+class WarehouseItemsByIdCreate(WarehouseItemsByIdBase):
+    warehouse_id: int = Field(foreign_key="warehouse.id")
+    item_id: int = Field(foreign_key="item.id")
+    item_name: str
+    warehouse_price: float
+    retail_price: float
+    quantity: int
+
+
+# Properties to receive on warehouse update
+class WarehouseItemsByIdUpdate(WarehouseItemsByIdBase):
+    quantity: int | None = None  # type: ignore    
+
+class WarehouseItemsById(WarehouseItemsByIdBase, table=True):    
+    id: int | None = Field(default=None, primary_key=True)
+    warehouse: Warehouse = Relationship(back_populates="items")
+    item: Item = Relationship(back_populates="warehouse_items")
+
+class WarehouseItemsByIdPublic(WarehouseItemsByIdBase):
+    id: int    
+
+class WarehouseItemsByIdsPublic(SQLModel):    
+    data: list[WarehouseItemsByIdPublic]
     count: int
 
 # Store model, database table inferred from class name

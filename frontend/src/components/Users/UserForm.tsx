@@ -62,9 +62,7 @@ const UserForm = ({ user, mode, isOpen, onClose }: UserFormProps) => {
           is_superuser: false,
           is_active: false,
         },
-  });
-
-  console.log({ user });
+  });  
 
   const mutation = useMutation({
     mutationFn: (data: UserFormFields) => {

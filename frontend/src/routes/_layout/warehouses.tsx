@@ -106,7 +106,7 @@ function Warehouses() {
           Warehouses Management
         </Heading>
 
-        <Navbar type={"Warehouses"} />
+        <Navbar type={"Warehouse"} />
         <WarehousesTable />
       </Container>
     );

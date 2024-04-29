@@ -56,6 +56,33 @@ export type WarehousesPublic = {
   count: number;
 };
 
+export type WarehouseItemsByIdCreate = {
+  warehouse_id: number;
+  item_id: number;
+  item_name: string;
+  quantity: number;
+  warehouse_price: number | null;
+  retail_price: number | null;
+};
+
+export type WarehouseItemsByIdPublic = {  
+  warehouse_id: number;
+  item_id: number;
+  item_name: string;
+  quantity: number;
+  warehouse_price: number | null;
+  retail_price: number | null;
+};
+
+export type WarehouseItemsByIdUpdate = {
+  quantity: number;
+};
+
+export type WarehouseItemsByIdsPublic = {
+  data: Array<WarehouseItemsByIdPublic>;
+  count: number;
+};
+
 export type StoreCreate = {
   name: string;
   location: string;

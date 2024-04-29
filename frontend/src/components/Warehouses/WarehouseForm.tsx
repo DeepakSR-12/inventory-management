@@ -26,7 +26,7 @@ import useCustomToast from "../../hooks/useCustomToast";
 
 interface WarehouseFormProps {
   mode: "add" | "edit";
-  warehouse?: WarehousePublic; // Only needed for edit mode
+  warehouse?: WarehousePublic;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -93,7 +93,7 @@ const WarehouseForm = ({
         isOpen={isOpen}
         onClose={onClose}
         size={{ base: "sm", md: "md" }}
-        isCentered
+        isCentered        
       >
         <ModalOverlay />
         <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>

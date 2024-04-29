@@ -16,6 +16,8 @@ const Navbar = ({ type }: NavbarProps) => {
   const addWarehouseModal = useDisclosure();
   const addStoreModal = useDisclosure();
 
+  const receiveItemModal = useDisclosure();
+
   return (
     <>
       <Flex py={8} gap={4}>

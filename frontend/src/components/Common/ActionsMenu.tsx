@@ -7,12 +7,13 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { FiEdit, FiTrash } from "react-icons/fi";
+import { FiEdit, FiEye, FiTrash } from "react-icons/fi";
 
 import type {
   ItemPublic,
   StorePublic,
   UserPublic,
+  WarehouseItemsByIdPublic,
   WarehousePublic,
 } from "../../client";
 import Delete from "./DeleteAlert";
@@ -20,16 +21,18 @@ import WarehouseForm from "../Warehouses/WarehouseForm";
 import StoreForm from "../Stores/StoreForm";
 import UserForm from "../Users/UserForm";
 import ItemForm from "../Items/ItemForm";
+import WarehousesById from "./warehouseItem";
 
 interface ActionsMenuProps {
   type: string;
-  value: ItemPublic | UserPublic | WarehousePublic | StorePublic;
+  value: ItemPublic | UserPublic | WarehousePublic | StorePublic | WarehouseItemsByIdPublic;
   disabled?: boolean;
 }
 
 const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
   const editUserModal = useDisclosure();
   const deleteModal = useDisclosure();
+  const viewUserModal = useDisclosure();
 
   return (
     <>
@@ -41,6 +44,12 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
           variant="unstyled"
         />
         <MenuList>
+          <MenuItem
+            onClick={viewUserModal.onOpen}
+            icon={<FiEye fontSize="16px" />}
+          >
+            View {type}
+          </MenuItem>
           <MenuItem
             onClick={editUserModal.onOpen}
             icon={<FiEdit fontSize="16px" />}
@@ -89,6 +98,12 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
           id={value.id}
           isOpen={deleteModal.isOpen}
           onClose={deleteModal.onClose}
+        />
+
+        <WarehousesById
+          warehouse={value as WarehousePublic}
+          isOpen={viewUserModal.isOpen}
+          onClose={viewUserModal.onClose}
         />
       </Menu>
     </>
