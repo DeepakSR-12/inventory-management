@@ -8,6 +8,19 @@ from app.models import WarehouseItemsById, WarehouseItemsByIdCreate, WarehouseIt
 
 router = APIRouter()
 
+@router.get("/", response_model=WarehouseItemsByIdsPublic)
+def read_warehouse_items(
+    session: SessionDep, skip: int = 0, limit: int = 100
+) -> Any:
+    """
+    Retrieve warehouse items.
+    """
+    count_statement = select(func.count()).select_from(WarehouseItemsById)
+    count = session.exec(count_statement).one()
+    statement = select(WarehouseItemsById).offset(skip).limit(limit)
+    warehouse_items = session.exec(statement).all()
+
+    return WarehouseItemsByIdsPublic(data=warehouse_items, count=count)
 
 @router.get("/{id}", response_model=WarehouseItemsByIdsPublic)
 def read_warehouse_items_by_id(session: SessionDep, id: int, skip: int = 0, limit: int = 100) -> Any:

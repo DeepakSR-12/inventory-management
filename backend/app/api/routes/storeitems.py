@@ -13,6 +13,20 @@ from app.models import (
 
 router = APIRouter()
 
+@router.get("/", response_model=StoreItemsByIdsPublic)
+def read_store_items(
+    session: SessionDep, skip: int = 0, limit: int = 100
+) -> Any:
+    """
+    Retrieve store items.
+    """
+    count_statement = select(func.count()).select_from(StoreItemsById)
+    count = session.exec(count_statement).one()
+    statement = select(StoreItemsById).offset(skip).limit(limit)
+    store_items = session.exec(statement).all()
+
+    return StoreItemsByIdsPublic(data=store_items, count=count)
+
 
 @router.get("/{id}", response_model=StoreItemsByIdsPublic)
 def read_store_items_by_id(

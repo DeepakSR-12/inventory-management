@@ -654,6 +654,11 @@ export class WarehousesService {
   }
 }
 
+export type TDataReadWarehouseItems = {
+  limit?: number;
+  skip?: number;
+};
+
 export type TDataReadWarehouseItemsById = {
   id: number;
   limit?: number;
@@ -673,6 +678,29 @@ export type TDataDeleteWarehouseItemById = {
 
 // Warehouse By Id Service
 export class WarehouseItemsByIdService {
+  /**
+   * Read Warehouses Items
+   * Retrieve Warehouses Items
+   * @returns WarehouseItemsByIdsPublic Successful Response
+   * @throws ApiError
+   */
+  public static readWarehouseItems(
+    data: TDataReadWarehouseItems
+  ): CancelablePromise<WarehouseItemsByIdsPublic> {
+    const { limit = 100, skip = 0 } = data;
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/warehouseitems",
+      query: {
+        skip,
+        limit,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
   /**
    * Read Warehouses By Id
    * Retrieve Warehouses By Id.
@@ -900,6 +928,11 @@ export class StoresService {
   }
 }
 
+export type TDataReadStoreItems = {
+  limit?: number;
+  skip?: number;
+};
+
 export type TDataReadStoreItemsById = {
   id: number;
   limit?: number;
@@ -913,6 +946,29 @@ export type TDataShipItemsById = {
 
 // StoreItems By Id Service
 export class StoreItemsByIdService {
+  /**
+   * Read Store Items
+   * Retrieve Store Items
+   * @returns StoreItemsByIdsPublic Successful Response
+   * @throws ApiError
+   */
+  public static readStoreItems(
+    data: TDataReadStoreItems
+  ): CancelablePromise<StoreItemsByIdsPublic> {
+    const { limit = 100, skip = 0 } = data;
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/storeitems",
+      query: {
+        skip,
+        limit,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
   /**
    * Read StoresItems By Id
    * Retrieve StoreItems By Id.
@@ -948,8 +1004,11 @@ export class StoreItemsByIdService {
   public static shipItemsById(
     data: TDataShipItemsById
   ): CancelablePromise<StoreItemsByIdPublic> {
-    const { requestBody, previousQuantity, id } = data;    
-    const updateBody = {...requestBody, quantity: previousQuantity - requestBody.quantity}
+    const { requestBody, previousQuantity, id } = data;
+    const updateBody = {
+      ...requestBody,
+      quantity: previousQuantity - requestBody.quantity,
+    };
 
     __request(OpenAPI, {
       method: "PUT",
@@ -1023,8 +1082,11 @@ export class PurchasesService {
   public static createPurchase(
     data: TDataCreatePurchase
   ): CancelablePromise<PurchasePublic> {
-    const { requestBody, previousQuantity, id } = data;    
-    const updateBody = {...requestBody, quantity: previousQuantity - requestBody.quantity}
+    const { requestBody, previousQuantity, id } = data;
+    const updateBody = {
+      ...requestBody,
+      quantity: previousQuantity - requestBody.quantity,
+    };
 
     __request(OpenAPI, {
       method: "PUT",
