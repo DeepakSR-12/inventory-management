@@ -1,5 +1,3 @@
-import { Navigate } from "@tanstack/react-router";
-import useAuth from "../../hooks/useAuth";
 import {
   Container,
   Flex,
@@ -15,18 +13,22 @@ import {
   TableContainer,
   Tbody,
   Td,
-  Text,
   Th,
   Thead,
   Tr,
+  Button,
+  HStack,
+  Text,
   Box,
 } from "@chakra-ui/react";
 import { WarehouseItemsByIdService, WarehousePublic } from "../../client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import ActionsMenu from "./ActionsMenu";
 import { ErrorBoundary } from "react-error-boundary";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
+import useAuth from "../../hooks/useAuth";
 import Navbar from "./Navbar";
+import { Navigate } from "@tanstack/react-router";
 
 interface WarehousesItemsProps {
   warehouse: WarehousePublic;
@@ -34,36 +36,53 @@ interface WarehousesItemsProps {
   onClose: () => void;
 }
 
-function WarehousesItemsTableBody({ id }: { id: number }) {
+function WarehousesItemsTableBody({
+  id,
+  currentPage,
+  itemsPerPage,
+}: {
+  id: number;
+  currentPage: number;
+  itemsPerPage: number;
+}) {
   const { data: warehouseItems } = useSuspenseQuery({
-    queryKey: ["warehouseItemsById"],
+    queryKey: ["warehouseItemsById", id],
     queryFn: () => WarehouseItemsByIdService.readWarehouseItemsById({ id }),
   });
 
+  // Sort and paginate the items
+  const sortedWarehouseItems = warehouseItems.data.sort((a, b) => a.id - b.id);
+  const paginatedWarehouseItems = sortedWarehouseItems.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
-    <>
-      {!!warehouseItems?.data?.length ? (
-        <Tbody>
-          {warehouseItems.data.sort((a, b) => a.id - b.id).map((warehouseItem, index) => (
-            <Tr key={index}>
-              <Td>{warehouseItem.id}</Td>
-              <Td>{warehouseItem.item_name}</Td>
-              <Td>{warehouseItem.item_id}</Td>
-              <Td>{warehouseItem.warehouse_price}</Td>
-              <Td>{warehouseItem.retail_price}</Td>
-              <Td>{warehouseItem.quantity}</Td>
-              <Td>
-                <ActionsMenu type={"WarehouseItem"} value={warehouseItem} />
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-      ) : null}
-    </>
+    <Tbody>
+      {paginatedWarehouseItems.map((warehouseItem, index) => (
+        <Tr key={index}>
+          <Td>{warehouseItem.id}</Td>
+          <Td>{warehouseItem.item_name}</Td>
+          <Td>{warehouseItem.item_id}</Td>
+          <Td>{warehouseItem.warehouse_price}</Td>
+          <Td>{warehouseItem.retail_price}</Td>
+          <Td>{warehouseItem.quantity}</Td>
+          <Td>
+            <ActionsMenu type="WarehouseItem" value={warehouseItem} />
+          </Td>
+        </Tr>
+      ))}
+    </Tbody>
   );
 }
 
 function WarehousesItemsTable({ id }: { id: number }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const nextPage = () => setCurrentPage((prev) => prev + 1);
+  const prevPage = () => setCurrentPage((prev) => prev - 1);
+
   return (
     <TableContainer>
       <Table size={{ base: "sm", md: "md" }}>
@@ -82,7 +101,7 @@ function WarehousesItemsTable({ id }: { id: number }) {
           fallbackRender={({ error }) => (
             <Tbody>
               <Tr>
-                <Td colSpan={4}>Something went wrong: {error.message}</Td>
+                <Td colSpan={7}>Something went wrong: {error.message}</Td>
               </Tr>
             </Tbody>
           )}
@@ -92,7 +111,7 @@ function WarehousesItemsTable({ id }: { id: number }) {
               <Tbody>
                 {new Array(5).fill(null).map((_, index) => (
                   <Tr key={index}>
-                    {new Array(4).fill(null).map((_, index) => (
+                    {new Array(7).fill(null).map((_, index) => (
                       <Td key={index}>
                         <Flex>
                           <Skeleton height="20px" width="20px" />
@@ -104,10 +123,23 @@ function WarehousesItemsTable({ id }: { id: number }) {
               </Tbody>
             }
           >
-            <WarehousesItemsTableBody id={id} />
+            <WarehousesItemsTableBody
+              id={id}
+              currentPage={currentPage}
+              itemsPerPage={itemsPerPage}
+            />
           </Suspense>
         </ErrorBoundary>
       </Table>
+
+      {/* Pagination controls */}
+      <HStack justifyContent="center" mt={10}>
+        <Button onClick={prevPage} isDisabled={currentPage <= 1}>
+          Previous
+        </Button>
+        <Text>Page {currentPage}</Text>
+        <Button onClick={nextPage}>Next</Button>
+      </HStack>
     </TableContainer>
   );
 }
@@ -123,44 +155,49 @@ const WarehousesItems = ({
     return <Navigate to="/" replace />;
   } else {
     return (
-      <Modal isOpen={isOpen} onClose={onClose} size="full" isCentered>
+      <Modal
+        closeOnEsc={false}
+        isOpen={isOpen}
+        onClose={onClose}
+        size="full"
+        isCentered
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalCloseButton />
           <ModalHeader>
-          <Container maxW="container.md" py={10}>
-              <Heading as="h1" size="lg" mb={4} textAlign="center">
+            <Container maxW="container.md">
+              <Heading as="h1" size="lg" my={8} textAlign="center">
                 Warehouse Details
               </Heading>
-              <Box
-                border="1px"
-                borderColor="gray.300"
-                borderRadius="md"
-                p={5}
-                boxShadow="md"
-              >
-                <Flex direction="column" gap={4}>
-                  <Box>
+              <Box pt={2}>
+                <Flex
+                  direction={["column", "row", "row"]}
+                  flexWrap={["nowrap", "wrap", "wrap"]}
+                  justifyContent={"flex-end"}
+                  gap={4}
+                >
+                  <Box flexBasis={["100%", "33.33%", "30%"]}>
                     <Heading as="h2" size="md" color="ui.main">
-                      Name:
+                      Name
                     </Heading>
-                    <Text fontSize="lg" mb={2}>
+                    <Text fontSize="sm" mb={2}>
                       {warehouse.name}
                     </Text>
                   </Box>
-                  <Box>
+                  <Box flexBasis={["100%", "33.33%", "30%"]}>
                     <Heading as="h2" size="md" color="ui.main">
-                      Location:
+                      Location
                     </Heading>
-                    <Text fontSize="lg" mb={2}>
+                    <Text fontSize="sm" mb={2}>
                       {warehouse.location}
                     </Text>
                   </Box>
-                  <Box>
+                  <Box flexBasis={["100%", "33.33%", "30%"]}>
                     <Heading as="h2" size="md" color="ui.main">
-                      Warehouse ID:
+                      Warehouse ID
                     </Heading>
-                    <Text fontSize="lg" mb={2}>
+                    <Text fontSize="sm" ml={2} mb={2}>
                       {warehouse.id}
                     </Text>
                   </Box>
@@ -168,7 +205,7 @@ const WarehousesItems = ({
               </Box>
             </Container>
           </ModalHeader>
-          <ModalBody pb={6}>
+          <ModalBody pb={6} py={10}>
             <Flex justifyContent={"flex-end"}>
               <Navbar type={"WarehouseItem"} id={warehouse.id} />
             </Flex>

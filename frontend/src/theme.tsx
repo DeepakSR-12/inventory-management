@@ -1,15 +1,15 @@
-import { extendTheme } from "@chakra-ui/react"
+import { extendTheme } from "@chakra-ui/react";
 
 const disabledStyles = {
   _disabled: {
     backgroundColor: "ui.main",
   },
-}
+};
 
 const config = {
-  initialColorMode: 'dark',
+  initialColorMode: "dark",
   useSystemColorMode: false,
-}
+};
 
 const theme = extendTheme({
   config,
@@ -21,7 +21,6 @@ const theme = extendTheme({
       danger: "#E53E3E",
       light: "#FAFAFA",
       dark: "#1A202C",
-      modalDark: "#1A202C",
       darkSlate: "#252D3D",
       dim: "#A0AEC0",
     },
@@ -63,9 +62,13 @@ const theme = extendTheme({
       },
     },
     Modal: {
-      color: "ui.modalDark"
-    }
+      baseStyle: ({ colorMode }: { colorMode: "dark" | "light" }) => ({
+        dialog: {
+          bg: colorMode === "dark" ? "ui.dark" : "ui.light",
+        },
+      }),
+    },
   },
-})
+});
 
-export default theme
+export default theme;

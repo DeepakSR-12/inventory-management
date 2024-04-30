@@ -87,19 +87,27 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
             </MenuItem>
           </MenuList>
           {type === "User" ? (
-            <UserForm
-              mode="edit"
-              user={value as UserPublic}
-              isOpen={editUserModal.isOpen}
-              onClose={editUserModal.onClose}
-            />
+            <>
+              {!!editUserModal.isOpen ? (
+                <UserForm
+                  mode="edit"
+                  user={value as UserPublic}
+                  isOpen={editUserModal.isOpen}
+                  onClose={editUserModal.onClose}
+                />
+              ) : null}
+            </>
           ) : type == "Item" ? (
-            <ItemForm
-              mode="edit"
-              item={value as ItemPublic}
-              isOpen={editUserModal.isOpen}
-              onClose={editUserModal.onClose}
-            />
+            <>
+              {!!editUserModal.isOpen ? (
+                <ItemForm
+                  mode="edit"
+                  item={value as ItemPublic}
+                  isOpen={editUserModal.isOpen}
+                  onClose={editUserModal.onClose}
+                />
+              ) : null}
+            </>
           ) : type == "Warehouse" ? (
             <WarehouseForm
               mode="edit"

@@ -163,9 +163,7 @@ const WarehouseItemsForm = ({
       retail_price: item?.retail_price!,
       item_id: Number(selectedItemId),
       item_name: item?.name!,
-    };
-
-    console.log({ requestBody });
+    };    
 
     mutation.mutate(requestBody);
   };
@@ -180,7 +178,7 @@ const WarehouseItemsForm = ({
       {isOpen ? (
         <Modal
           isOpen={isOpen}
-          onClose={onClose}
+          onClose={onCancel}
           size={{ base: "sm", md: "md" }}
           isCentered
         >

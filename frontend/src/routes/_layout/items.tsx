@@ -10,11 +10,14 @@ import {
   Th,
   Thead,
   Tr,
+  Button,
+  HStack,
+  Text,
 } from "@chakra-ui/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { ItemsService } from "../../client";
 import ActionsMenu from "../../components/Common/ActionsMenu";
@@ -25,15 +28,28 @@ export const Route = createFileRoute("/_layout/items")({
   component: Items,
 });
 
-function ItemsTableBody() {
+function ItemsTableBody({
+  currentPage,
+  itemsPerPage,
+}: {
+  currentPage: number;
+  itemsPerPage: number;
+}) {
   const { data: items } = useSuspenseQuery({
     queryKey: ["items"],
     queryFn: () => ItemsService.readItems({}),
   });
 
+  // Sort items and select only the ones for the current page
+  const sortedItems = items.data.sort((a, b) => a.id - b.id);
+  const paginatedItems = sortedItems.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <Tbody>
-      {items.data.sort((a, b) => a.id - b.id).map((item) => (
+      {paginatedItems.map((item) => (
         <Tr key={item.id}>
           <Td>{item.id}</Td>
           <Td color={!item.name ? "ui.dim" : "inherit"}>
@@ -49,7 +65,14 @@ function ItemsTableBody() {
     </Tbody>
   );
 }
+
 function ItemsTable() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const nextPage = () => setCurrentPage((prev) => prev + 1);
+  const prevPage = () => setCurrentPage((prev) => prev - 1);
+
   return (
     <TableContainer>
       <Table size={{ base: "sm", md: "md" }}>
@@ -88,10 +111,22 @@ function ItemsTable() {
               </Tbody>
             }
           >
-            <ItemsTableBody />
+            <ItemsTableBody
+              currentPage={currentPage}
+              itemsPerPage={itemsPerPage}
+            />
           </Suspense>
         </ErrorBoundary>
       </Table>
+
+      {/* Pagination controls */}
+      <HStack justifyContent="center" mt={10}>
+        <Button onClick={prevPage} isDisabled={currentPage <= 1}>
+          Previous
+        </Button>
+        <Text>Page {currentPage}</Text>
+        <Button onClick={nextPage}>Next</Button>
+      </HStack>
     </TableContainer>
   );
 }
@@ -100,7 +135,7 @@ export default function Items() {
   const { user } = useAuth();
 
   if (!user?.is_superuser) {
-    return <Navigate to="/" replace />
+    return <Navigate to="/" replace />;
   } else {
     return (
       <Container maxW="full">

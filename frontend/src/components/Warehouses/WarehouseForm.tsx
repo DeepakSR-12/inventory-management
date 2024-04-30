@@ -91,7 +91,7 @@ const WarehouseForm = ({
     <>
       <Modal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={onCancel}
         size={{ base: "sm", md: "md" }}
         isCentered        
       >

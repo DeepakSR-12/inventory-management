@@ -10,11 +10,13 @@ import {
   Th,
   Thead,
   Tr,
+  Button,
+  HStack,
+  Text,
 } from "@chakra-ui/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Navigate, createFileRoute } from "@tanstack/react-router";
-
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { WarehousesService } from "../../client";
 import ActionsMenu from "../../components/Common/ActionsMenu";
@@ -25,15 +27,27 @@ export const Route = createFileRoute("/_layout/warehouses")({
   component: Warehouses,
 });
 
-function WarehousesTableBody() {
+function WarehousesTableBody({
+  currentPage,
+  itemsPerPage,
+}: {
+  currentPage: number;
+  itemsPerPage: number;
+}) {
   const { data: warehouses } = useSuspenseQuery({
     queryKey: ["warehouses"],
     queryFn: () => WarehousesService.readWarehouses({}),
   });
 
+  const sortedWarehouses = warehouses.data.sort((a, b) => a.id - b.id);
+  const paginatedWarehouses = sortedWarehouses.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <Tbody>
-      {warehouses.data.sort((a, b) => a.id - b.id).map((warehouse) => (
+      {paginatedWarehouses.map((warehouse) => (
         <Tr key={warehouse.id}>
           <Td>{warehouse.id}</Td>
           <Td color={!warehouse.name ? "ui.dim" : "inherit"}>
@@ -48,7 +62,14 @@ function WarehousesTableBody() {
     </Tbody>
   );
 }
+
 function WarehousesTable() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const nextPage = () => setCurrentPage((prev) => prev + 1);
+  const prevPage = () => setCurrentPage((prev) => prev - 1);
+
   return (
     <TableContainer>
       <Table size={{ base: "sm", md: "md" }}>
@@ -86,10 +107,22 @@ function WarehousesTable() {
               </Tbody>
             }
           >
-            <WarehousesTableBody />
+            <WarehousesTableBody
+              currentPage={currentPage}
+              itemsPerPage={itemsPerPage}
+            />
           </Suspense>
         </ErrorBoundary>
       </Table>
+
+      {/* Pagination controls */}
+      <HStack justifyContent="center" mt={10}>
+        <Button onClick={prevPage} isDisabled={currentPage <= 1}>
+          Previous
+        </Button>
+        <Text>Page {currentPage}</Text>
+        <Button onClick={nextPage}>Next</Button>
+      </HStack>
     </TableContainer>
   );
 }
