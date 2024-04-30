@@ -26,7 +26,6 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import ActionsMenu from "./ActionsMenu";
 import { ErrorBoundary } from "react-error-boundary";
 import { Suspense } from "react";
-import Navbar from "./Navbar";
 
 interface StoresItemsProps {
   store: StorePublic;
@@ -40,25 +39,25 @@ function StoresItemsTableBody({ id }: { id: number }) {
     queryFn: () => StoreItemsByIdService.readStoreItemsById({ id }),
   });
 
-  console.log({ storeItems });
-
   return (
     <>
       {!!storeItems?.data?.length ? (
         <Tbody>
-          {storeItems.data.map((storeItem, index) => (
-            <Tr key={index}>
-              <Td>{storeItem.id}</Td>
-              <Td>{storeItem.item_name}</Td>
-              <Td>{storeItem.item_id}</Td>
-              <Td>{storeItem.warehouse_price}</Td>
-              <Td>{storeItem.retail_price}</Td>
-              <Td>{storeItem.quantity}</Td>
-              <Td>
-                <ActionsMenu type={"StoreItem"} value={storeItem} />
-              </Td>
-            </Tr>
-          ))}
+          {storeItems.data
+            .sort((a, b) => a.id - b.id)
+            .map((storeItem, index) => (
+              <Tr key={index}>
+                <Td>{storeItem.id}</Td>
+                <Td>{storeItem.item_name}</Td>
+                <Td>{storeItem.item_id}</Td>
+                <Td>{storeItem.warehouse_price}</Td>
+                <Td>{storeItem.retail_price}</Td>
+                <Td>{storeItem.quantity}</Td>
+                <Td>
+                  <ActionsMenu type={"StoreItem"} value={storeItem} />
+                </Td>
+              </Tr>
+            ))}
         </Tbody>
       ) : null}
     </>
@@ -71,7 +70,7 @@ function StoresItemsTable({ id }: { id: number }) {
       <Table size={{ base: "sm", md: "md" }}>
         <Thead>
           <Tr>
-            <Th>ID</Th>
+            <Th aria-sort="ascending">ID</Th>
             <Th>Item Name</Th>
             <Th>Item ID</Th>
             <Th>Warehouse Price</Th>
@@ -166,10 +165,7 @@ const StoresItems = ({ store, isOpen, onClose }: StoresItemsProps) => {
               </Box>
             </Container>
           </ModalHeader>
-          <ModalBody pb={6}>
-            <Flex justifyContent={"flex-end"}>
-              <Navbar type={"StoreItem"} id={store.id} />
-            </Flex>
+          <ModalBody pb={6} py={10}>            
             <StoresItemsTable id={store.id} />
           </ModalBody>
         </ModalContent>

@@ -7,6 +7,7 @@ import {
   FiSettings,
   FiUsers,
   FiShoppingBag,
+  FiShoppingCart,
 } from "react-icons/fi";
 
 import type { UserPublic } from "../../client";
@@ -35,6 +36,7 @@ const SidebarItems = ({ onClose }: SidebarItemsProps) => {
 
   finalItems = [
     ...finalItems,
+    { icon: FiShoppingCart, title: "Purchases", path: "/purchases" },
     { icon: FiSettings, title: "User Settings", path: "/settings" },
   ];
 

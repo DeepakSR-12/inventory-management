@@ -12,32 +12,32 @@ import {
   Th,
   Thead,
   Tr,
-} from "@chakra-ui/react"
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
-import { Navigate, createFileRoute } from "@tanstack/react-router"
+} from "@chakra-ui/react";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { Navigate, createFileRoute } from "@tanstack/react-router";
 
-import { Suspense } from "react"
-import { type UserPublic, UsersService } from "../../client"
-import ActionsMenu from "../../components/Common/ActionsMenu"
-import Navbar from "../../components/Common/Navbar"
-import useAuth from "../../hooks/useAuth"
+import { Suspense } from "react";
+import { type UserPublic, UsersService } from "../../client";
+import ActionsMenu from "../../components/Common/ActionsMenu";
+import Navbar from "../../components/Common/Navbar";
+import useAuth from "../../hooks/useAuth";
 
 export const Route = createFileRoute("/_layout/users")({
   component: Users,
-})
+});
 
 const MembersTableBody = () => {
-  const queryClient = useQueryClient()
-  const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
+  const queryClient = useQueryClient();
+  const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"]);
 
   const { data: users } = useSuspenseQuery({
     queryKey: ["users"],
     queryFn: () => UsersService.readUsers({}),
-  })
+  });
 
   return (
     <Tbody>
-      {users.data.map((user) => (
+      {users.data.sort((a, b) => a.id - b.id).map((user) => (
         <Tr key={user.id}>
           <Td color={!user.full_name ? "ui.dim" : "inherit"}>
             {user.full_name || "N/A"}
@@ -71,8 +71,8 @@ const MembersTableBody = () => {
         </Tr>
       ))}
     </Tbody>
-  )
-}
+  );
+};
 
 const MembersBodySkeleton = () => {
   return (
@@ -85,14 +85,14 @@ const MembersBodySkeleton = () => {
         ))}
       </Tr>
     </Tbody>
-  )
-}
+  );
+};
 
 function Users() {
   const { user } = useAuth();
 
   if (!user?.is_superuser) {
-    return <Navigate to="/" replace />
+    return <Navigate to="/" replace />;
   } else {
     return (
       <Container maxW="full">
@@ -107,10 +107,10 @@ function Users() {
             <Thead>
               <Tr>
                 <Th width="20%">Full name</Th>
-                <Th width="50%">Email</Th>
-                <Th width="10%">Role</Th>
-                <Th width="10%">Status</Th>
-                <Th width="10%">Actions</Th>
+                <Th width="20%">Email</Th>
+                <Th>Role</Th>
+                <Th>Status</Th>
+                <Th>Actions</Th>
               </Tr>
             </Thead>
             <Suspense fallback={<MembersBodySkeleton />}>
@@ -119,6 +119,6 @@ function Users() {
           </Table>
         </TableContainer>
       </Container>
-    )
+    );
   }
 }

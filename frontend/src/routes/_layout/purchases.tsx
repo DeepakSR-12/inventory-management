@@ -12,54 +12,51 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { Navigate, createFileRoute } from "@tanstack/react-router";
 
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { ItemsService } from "../../client";
-import ActionsMenu from "../../components/Common/ActionsMenu";
+import { PurchasesService } from "../../client";
 import Navbar from "../../components/Common/Navbar";
 import useAuth from "../../hooks/useAuth";
 
-export const Route = createFileRoute("/_layout/items")({
-  component: Items,
+export const Route = createFileRoute("/_layout/purchases")({
+  component: Purchases,
 });
 
-function ItemsTableBody() {
-  const { data: items } = useSuspenseQuery({
-    queryKey: ["items"],
-    queryFn: () => ItemsService.readItems({}),
+function PurchasesTableBody() {
+  const { data: purchases } = useSuspenseQuery({
+    queryKey: ["purchases"],
+    queryFn: () => PurchasesService.readPurchases({}),
   });
 
   return (
     <Tbody>
-      {items.data.sort((a, b) => a.id - b.id).map((item) => (
-        <Tr key={item.id}>
-          <Td>{item.id}</Td>
-          <Td color={!item.name ? "ui.dim" : "inherit"}>
-            {item.name || "N/A"}
-          </Td>
-          <Td>{item.warehouse_price}</Td>
-          <Td>{item.retail_price}</Td>
-          <Td>
-            <ActionsMenu type={"Item"} value={item} />
-          </Td>
+      {purchases.data.sort((a, b) => a.id - b.id).map((purchase) => (
+        <Tr key={purchase.id}>
+          <Td>{purchase.id}</Td>
+          <Td color={!purchase.item_name ? "ui.dim" : "inherit"}>
+            {purchase.item_name || "N/A"}
+          </Td>                       
+          <Td>{purchase.quantity}</Td>
+          <Td>{purchase.retail_price}</Td>
+          <Td>{purchase.date.toString()}</Td>
         </Tr>
       ))}
     </Tbody>
   );
 }
-function ItemsTable() {
+function PurchasesTable() {
   return (
     <TableContainer>
       <Table size={{ base: "sm", md: "md" }}>
         <Thead>
           <Tr>
-            <Th>ID</Th>
-            <Th>Name</Th>
-            <Th>Warehouse Price</Th>
-            <Th>Retail Price</Th>
-            <Th>Actions</Th>
+            <Th>Purchase ID</Th>
+            <Th>Item</Th>      
+            <Th>Quantity</Th>            
+            <Th>Price Sold</Th>            
+            <Th>Date</Th>            
           </Tr>
         </Thead>
         <ErrorBoundary
@@ -74,9 +71,9 @@ function ItemsTable() {
           <Suspense
             fallback={
               <Tbody>
-                {new Array(5).fill(null).map((_, index) => (
+                {new Array(6).fill(null).map((_, index) => (
                   <Tr key={index}>
-                    {new Array(4).fill(null).map((_, index) => (
+                    {new Array(5).fill(null).map((_, index) => (
                       <Td key={index}>
                         <Flex>
                           <Skeleton height="20px" width="20px" />
@@ -88,7 +85,7 @@ function ItemsTable() {
               </Tbody>
             }
           >
-            <ItemsTableBody />
+            <PurchasesTableBody />
           </Suspense>
         </ErrorBoundary>
       </Table>
@@ -96,21 +93,18 @@ function ItemsTable() {
   );
 }
 
-export default function Items() {
+function Purchases() {
   const { user } = useAuth();
 
   if (!user?.is_superuser) {
-    return <Navigate to="/" replace />
+    return <Navigate to="/" replace />;
   } else {
     return (
       <Container maxW="full">
-        <Heading size="lg" textAlign="center" pt={12}>
-          Items Management
+        <Heading size="lg" mb={20} textAlign="center" pt={12}>
+          Purchases
         </Heading>
-        <Flex justifyContent={"flex-end"}>
-          <Navbar type={"Item"} />
-        </Flex>
-        <ItemsTable />
+        <PurchasesTable />
       </Container>
     );
   }

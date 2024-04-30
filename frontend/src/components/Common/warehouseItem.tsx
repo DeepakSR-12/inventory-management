@@ -44,7 +44,7 @@ function WarehousesItemsTableBody({ id }: { id: number }) {
     <>
       {!!warehouseItems?.data?.length ? (
         <Tbody>
-          {warehouseItems.data.map((warehouseItem, index) => (
+          {warehouseItems.data.sort((a, b) => a.id - b.id).map((warehouseItem, index) => (
             <Tr key={index}>
               <Td>{warehouseItem.id}</Td>
               <Td>{warehouseItem.item_name}</Td>

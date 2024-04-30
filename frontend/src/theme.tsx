@@ -6,7 +6,13 @@ const disabledStyles = {
   },
 }
 
+const config = {
+  initialColorMode: 'dark',
+  useSystemColorMode: false,
+}
+
 const theme = extendTheme({
+  config,
   colors: {
     ui: {
       main: "#009688",
@@ -15,6 +21,7 @@ const theme = extendTheme({
       danger: "#E53E3E",
       light: "#FAFAFA",
       dark: "#1A202C",
+      modalDark: "#1A202C",
       darkSlate: "#252D3D",
       dim: "#A0AEC0",
     },
@@ -55,6 +62,9 @@ const theme = extendTheme({
         },
       },
     },
+    Modal: {
+      color: "ui.modalDark"
+    }
   },
 })
 

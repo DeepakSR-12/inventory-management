@@ -33,6 +33,9 @@ import type {
   StoreItemsByIdsPublic,
   StoreItemsByIdCreate,
   StoreItemsByIdPublic,
+  PurchaseCreate,
+  PurchasesPublic,
+  PurchasePublic,
 } from "./models";
 
 export type TDataLoginAccessToken = {
@@ -908,19 +911,11 @@ export type TDataShipItemsById = {
   id: number;
 };
 
-// export type TDataUpdateStoreItemById = {
-//   id: number;
-//   requestBody: StoreItemsByIdUpdate;
-// };
-// export type TDataDeleteStoreItemById = {
-//   id: number;
-// };
-
 // StoreItems By Id Service
 export class StoreItemsByIdService {
   /**
-   * Read Stores By Id
-   * Retrieve Stores By Id.
+   * Read StoresItems By Id
+   * Retrieve StoreItems By Id.
    * @returns StoreItemsByIdsPublic Successful Response
    * @throws ApiError
    */
@@ -945,9 +940,9 @@ export class StoreItemsByIdService {
   }
 
   /**
-   * rece Warehouse
-   * Create new warehouse.
-   * @returns WarehousePublic Successful Response
+   * Ship Items
+   * Ship Items to Store
+   * @returns StoreItemsByIdPublic Successful Response
    * @throws ApiError
    */
   public static shipItemsById(
@@ -979,50 +974,79 @@ export class StoreItemsByIdService {
       },
     });
   }
+}
 
-  // /**
-  //  * Update Warehouse Items by ID.
-  //  * Update a warehouse item.
-  //  * @returns WarehouseItemsByIdPublic Successful Response
-  //  * @throws ApiError
-  //  */
-  // public static updateWarehouseItemsById(
-  //   data: TDataUpdateWarehouseItemById
-  // ): CancelablePromise<WarehouseItemsByIdPublic> {
-  //   const { id, requestBody } = data;
-  //   return __request(OpenAPI, {
-  //     method: "PUT",
-  //     url: "/api/v1/warehouseitems/{id}",
-  //     path: {
-  //       id,
-  //     },
-  //     body: requestBody,
-  //     mediaType: "application/json",
-  //     errors: {
-  //       422: `Validation Error`,
-  //     },
-  //   });
-  // }
+export type TDataReadPurchases = {
+  limit?: number;
+  skip?: number;
+};
+export type TDataCreatePurchase = {
+  requestBody: PurchaseCreate;
+  previousQuantity: number;
+  id: number;
+};
+export type TDataDeletePurchase = {
+  id: number;
+};
 
-  // /**
-  //  * Delete Warehouse Item by ID.
-  //  * Delete a warehouse item.
-  //  * @returns Message Successful Response
-  //  * @throws ApiError
-  //  */
-  // public static deleteWarehouseItemById(
-  //   data: TDataDeleteWarehouseItemById
-  // ): CancelablePromise<Message> {
-  //   const { id } = data;
-  //   return __request(OpenAPI, {
-  //     method: "DELETE",
-  //     url: "/api/v1/warehouseitems/{id}",
-  //     path: {
-  //       id,
-  //     },
-  //     errors: {
-  //       422: `Validation Error`,
-  //     },
-  //   });
-  // }
+// Purchases
+export class PurchasesService {
+  /**
+   * Read Purchases
+   * Retrieve Purchases.
+   * @returns PurchasesPublic Successful Response
+   * @throws ApiError
+   */
+  public static readPurchases(
+    data: TDataReadPurchases
+  ): CancelablePromise<PurchasesPublic> {
+    const { limit = 100, skip = 0 } = data;
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/purchases",
+      query: {
+        skip,
+        limit,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Create Purchase
+   * Create new purchase.
+   * @returns PurchasePublic Successful Response
+   * @throws ApiError
+   */
+  public static createPurchase(
+    data: TDataCreatePurchase
+  ): CancelablePromise<PurchasePublic> {
+    const { requestBody, previousQuantity, id } = data;    
+    const updateBody = {...requestBody, quantity: previousQuantity - requestBody.quantity}
+
+    __request(OpenAPI, {
+      method: "PUT",
+      url: "/api/v1/storeitems/{id}",
+      path: {
+        id: id,
+      },
+      body: updateBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/purchases",
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
 }

@@ -25,6 +25,7 @@ import ItemForm from "../Items/ItemForm";
 import WarehouseItemsForm from "../WarehouseItems/WarehouseItemsForm";
 import WarehousesItems from "./WarehouseItem";
 import StoresItems from "./StoreItem";
+import Navbar from "./Navbar";
 
 interface ActionsMenuProps {
   type: string;
@@ -45,115 +46,125 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
 
   return (
     <>
-      <Menu>
-        <MenuButton
-          isDisabled={disabled}
-          as={Button}
-          rightIcon={<BsThreeDotsVertical />}
-          variant="unstyled"
-        />
-        <MenuList>
-          {type == "WarehouseItem" ? (
-            <MenuItem
-              onClick={viewUserModal.onOpen}
-              icon={<FiShoppingBag fontSize="16px" />}
-            >
-              Ship Warehouse Item
-            </MenuItem>
-          ) : (
-            <MenuItem
-              onClick={viewUserModal.onOpen}
-              icon={<FiEye fontSize="16px" />}
-            >
-              View {type}
-            </MenuItem>
-          )}
-          <MenuItem
-            onClick={editUserModal.onOpen}
-            icon={<FiEdit fontSize="16px" />}
-          >
-            Edit {type === "WarehouseItem" ? "Warehouse Item" : type}
-          </MenuItem>
-          <MenuItem
-            onClick={deleteModal.onOpen}
-            icon={<FiTrash fontSize="16px" />}
-            color="ui.danger"
-          >
-            Delete {type === "WarehouseItem" ? "Warehouse Item" : type}
-          </MenuItem>
-        </MenuList>
-        {type === "User" ? (
-          <UserForm
-            mode="edit"
-            user={value as UserPublic}
-            isOpen={editUserModal.isOpen}
-            onClose={editUserModal.onClose}
+      {type != "StoreItem" ? (
+        <Menu>
+          <MenuButton
+            isDisabled={disabled}
+            as={Button}
+            rightIcon={<BsThreeDotsVertical />}
+            variant="unstyled"
           />
-        ) : type == "Item" ? (
-          <ItemForm
-            mode="edit"
-            item={value as ItemPublic}
-            isOpen={editUserModal.isOpen}
-            onClose={editUserModal.onClose}
-          />
-        ) : type == "Warehouse" ? (
-          <WarehouseForm
-            mode="edit"
-            warehouse={value as WarehousePublic}
-            isOpen={editUserModal.isOpen}
-            onClose={editUserModal.onClose}
-          />
-        ) : type == "WarehouseItem" ? (
-          <>
-            {!!editUserModal.isOpen ? (
-              <WarehouseItemsForm
-                mode="edit"
-                warehouseItem={value as WarehouseItemsByIdPublic}
-                isOpen={editUserModal.isOpen}
-                onClose={editUserModal.onClose}
-              />
+          <MenuList>
+            {type == "WarehouseItem" ? (
+              <MenuItem
+                onClick={viewUserModal.onOpen}
+                icon={<FiShoppingBag fontSize="16px" />}
+              >
+                Ship Warehouse Item
+              </MenuItem>
+            ) : type == "Warehouse" || type == "Store" ? (
+              <MenuItem
+                onClick={viewUserModal.onOpen}
+                icon={<FiEye fontSize="16px" />}
+              >
+                View {type}
+              </MenuItem>
             ) : null}
-          </>
-        ) : (
-          <StoreForm
-            mode="edit"
-            store={value as StorePublic}
-            isOpen={editUserModal.isOpen}
-            onClose={editUserModal.onClose}
+            {type !== "Item" ? (
+              <MenuItem
+                onClick={editUserModal.onOpen}
+                icon={<FiEdit fontSize="16px" />}
+              >
+                Edit {type === "WarehouseItem" ? "Warehouse Item" : type}
+              </MenuItem>
+            ) : null}
+            <MenuItem
+              onClick={deleteModal.onOpen}
+              icon={<FiTrash fontSize="16px" />}
+              color="ui.danger"
+            >
+              Delete {type === "WarehouseItem" ? "Warehouse Item" : type}
+            </MenuItem>
+          </MenuList>
+          {type === "User" ? (
+            <UserForm
+              mode="edit"
+              user={value as UserPublic}
+              isOpen={editUserModal.isOpen}
+              onClose={editUserModal.onClose}
+            />
+          ) : type == "Item" ? (
+            <ItemForm
+              mode="edit"
+              item={value as ItemPublic}
+              isOpen={editUserModal.isOpen}
+              onClose={editUserModal.onClose}
+            />
+          ) : type == "Warehouse" ? (
+            <WarehouseForm
+              mode="edit"
+              warehouse={value as WarehousePublic}
+              isOpen={editUserModal.isOpen}
+              onClose={editUserModal.onClose}
+            />
+          ) : type == "WarehouseItem" ? (
+            <>
+              {!!editUserModal.isOpen ? (
+                <WarehouseItemsForm
+                  mode="edit"
+                  warehouseItem={value as WarehouseItemsByIdPublic}
+                  isOpen={editUserModal.isOpen}
+                  onClose={editUserModal.onClose}
+                />
+              ) : null}
+            </>
+          ) : (
+            <StoreForm
+              mode="edit"
+              store={value as StorePublic}
+              isOpen={editUserModal.isOpen}
+              onClose={editUserModal.onClose}
+            />
+          )}
+          <Delete
+            type={type}
+            id={value.id}
+            isOpen={deleteModal.isOpen}
+            onClose={deleteModal.onClose}
           />
-        )}
-        <Delete
-          type={type}
-          id={value.id}
-          isOpen={deleteModal.isOpen}
-          onClose={deleteModal.onClose}
+
+          {!!viewUserModal.isOpen && type == "WarehouseItem" ? (
+            <WarehouseItemsForm
+              mode="ship"
+              warehouseItem={value as WarehouseItemsByIdPublic}
+              isOpen={viewUserModal.isOpen}
+              onClose={viewUserModal.onClose}
+            />
+          ) : null}
+
+          {!!viewUserModal.isOpen && type == "Warehouse" ? (
+            <WarehousesItems
+              warehouse={value as WarehousePublic}
+              isOpen={viewUserModal.isOpen}
+              onClose={viewUserModal.onClose}
+            />
+          ) : null}
+
+          {!!viewUserModal.isOpen && type == "Store" ? (
+            <StoresItems
+              store={value as StorePublic}
+              isOpen={viewUserModal.isOpen}
+              onClose={viewUserModal.onClose}
+            />
+          ) : null}
+        </Menu>
+      ) : (
+        <Navbar
+          type={"StoreItem"}
+          id={value?.id}
+          storeItem={value as StoreItemsByIdPublic}
         />
-
-        {!!viewUserModal.isOpen && type == "WarehouseItem" ? (
-          <WarehouseItemsForm
-            mode="ship"
-            warehouseItem={value as WarehouseItemsByIdPublic}
-            isOpen={viewUserModal.isOpen}
-            onClose={viewUserModal.onClose}
-          />
-        ) : null}
-
-        {!!viewUserModal.isOpen && type == "Warehouse" ? (
-          <WarehousesItems
-            warehouse={value as WarehousePublic}
-            isOpen={viewUserModal.isOpen}
-            onClose={viewUserModal.onClose}
-          />
-        ) : null}
-
-        {!!viewUserModal.isOpen && type == "Store" ? (
-          <StoresItems
-            store={value as StorePublic}
-            isOpen={viewUserModal.isOpen}
-            onClose={viewUserModal.onClose}
-          />
-        ) : null}
-      </Menu>
+      )}
     </>
   );
 };

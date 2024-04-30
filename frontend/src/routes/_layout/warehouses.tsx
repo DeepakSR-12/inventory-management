@@ -33,7 +33,7 @@ function WarehousesTableBody() {
 
   return (
     <Tbody>
-      {warehouses.data.map((warehouse) => (
+      {warehouses.data.sort((a, b) => a.id - b.id).map((warehouse) => (
         <Tr key={warehouse.id}>
           <Td>{warehouse.id}</Td>
           <Td color={!warehouse.name ? "ui.dim" : "inherit"}>
@@ -54,9 +54,9 @@ function WarehousesTable() {
       <Table size={{ base: "sm", md: "md" }}>
         <Thead>
           <Tr>
-            <Th>ID</Th>
-            <Th>Name</Th>
-            <Th>Location</Th>
+            <Th width="25%">ID</Th>
+            <Th width="35%">Name</Th>
+            <Th width="35%">Location</Th>
             <Th>Actions</Th>
           </Tr>
         </Thead>

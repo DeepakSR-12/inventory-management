@@ -6,23 +6,27 @@ import WarehouseForm from "../Warehouses/WarehouseForm";
 import UserForm from "../Users/UserForm";
 import ItemForm from "../Items/ItemForm";
 import WarehouseItemsForm from "../WarehouseItems/WarehouseItemsForm";
+import { StoreItemsByIdPublic } from "../../client";
+import PurchaseForm from "../Purchases/PurchaseForm";
 
 interface NavbarProps {
   type: string;
   id?: number;
+  storeItem?: StoreItemsByIdPublic;
 }
 
-const Navbar = ({ type, id }: NavbarProps) => {
+const Navbar = ({ type, id, storeItem }: NavbarProps) => {
   const addUserModal = useDisclosure();
   const addItemModal = useDisclosure();
   const addWarehouseModal = useDisclosure();
   const addStoreModal = useDisclosure();
 
   const receiveItemModal = useDisclosure();
+  const recordPurchaseModal = useDisclosure();
 
   return (
     <>
-      <Flex py={8} gap={4}>
+      <Flex py={4} gap={4}>
         <Button
           variant="primary"
           gap={1}
@@ -36,11 +40,17 @@ const Navbar = ({ type, id }: NavbarProps) => {
                   ? addWarehouseModal.onOpen
                   : type === "WarehouseItem"
                     ? receiveItemModal.onOpen
-                    : addStoreModal.onOpen
+                    : type === "StoreItem"
+                      ? recordPurchaseModal.onOpen
+                      : addStoreModal.onOpen
           }
         >
           <Icon as={FaPlus} />{" "}
-          {type === "WarehouseItem" ? "Receive Item" : `Add ${type}`}
+          {type === "WarehouseItem"
+            ? "Receive Item"
+            : type === "StoreItem"
+              ? "Record Purchase"
+              : `Add ${type}`}
         </Button>
         <UserForm
           mode="add"
@@ -67,6 +77,17 @@ const Navbar = ({ type, id }: NavbarProps) => {
           mode="add"
           isOpen={addItemModal.isOpen}
           onClose={addItemModal.onClose}
+        />
+        <PurchaseForm
+          isOpen={recordPurchaseModal.isOpen}
+          onClose={recordPurchaseModal.onClose}
+          id={storeItem?.id!}
+          warehouse_price={storeItem?.warehouse_price!}
+          retail_price={storeItem?.retail_price!}
+          store={storeItem?.store_id!}          
+          item={storeItem?.item_id!}
+          itemName={storeItem?.item_name!}
+          itemQuantity={storeItem?.quantity!}
         />
       </Flex>
     </>

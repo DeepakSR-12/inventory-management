@@ -213,7 +213,7 @@ const UserForm = ({ user, mode, isOpen, onClose }: UserFormProps) => {
               isLoading={isSubmitting}
               isDisabled={isEdit && !isDirty}
             >
-              Save
+              {isEdit ? "Update" : "Add"}
             </Button>
             <Button onClick={onCancel}>Cancel</Button>
           </ModalFooter>

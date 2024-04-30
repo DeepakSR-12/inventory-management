@@ -231,7 +231,7 @@ const WarehouseItemsForm = ({
                 <Input
                   id="quantity"
                   {...register("quantity", {
-                    required: "Quantity Items is required.",
+                    required: "Quantity is required.",
                     validate: () =>
                       !isShip ||
                       Number(watch("quantity")) <= warehouseItem?.quantity! ||

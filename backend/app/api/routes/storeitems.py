@@ -9,8 +9,6 @@ from app.models import (
     StoreItemsByIdCreate,
     StoreItemsByIdPublic,
     StoreItemsByIdsPublic,
-    StoreItemsByIdUpdate,
-    Message,
 )
 
 router = APIRouter()
@@ -77,35 +75,20 @@ def add_items_to_store(
 
     return new_store_item
 
+@router.put("/{id}", response_model=StoreItemsByIdPublic)
+def update_store_item(
+    *, session: SessionDep, id: int, store_in: StoreItemsById
+) -> Any:
+    """
+    Update an store item.
+    """
+    store_item = session.get(StoreItemsById, id)
+    if not store_item:
+        raise HTTPException(status_code=404, detail="Store Item not found")
 
-# @router.put("/{id}", response_model=StoreItemsByIdPublic)
-# def update_warehouse_item(
-#     *, session: SessionDep, id: int, warehouse_in: StoreItemsById
-# ) -> Any:
-#     """
-#     Update an warehouse item.
-#     """
-#     warehouse_item = session.get(StoreItemsById, id)
-#     if not warehouse_item:
-#         raise HTTPException(status_code=404, detail="Warehouse Item not found")
-
-#     update_dict = warehouse_in.model_dump(exclude_unset=True)
-#     warehouse_item.sqlmodel_update(update_dict)
-#     session.add(warehouse_item)
-#     session.commit()
-#     session.refresh(warehouse_item)
-#     return warehouse_item
-
-
-# @router.delete("/{id}")
-# def delete_warehouse_item(session: SessionDep, id: int) -> Message:
-#     """
-#     Delete a warehouse item.
-#     """
-#     warehouse_item = session.get(WarehouseItemsById, id)
-#     if not warehouse_item:
-#         raise HTTPException(status_code=404, detail="Warehouse item not found")
-
-#     session.delete(warehouse_item)
-#     session.commit()
-#     return Message(message="Warehouse item deleted successfully")
+    update_dict = store_in.model_dump(exclude_unset=True)
+    store_item.sqlmodel_update(update_dict)
+    session.add(store_item)
+    session.commit()
+    session.refresh(store_item)
+    return store_item

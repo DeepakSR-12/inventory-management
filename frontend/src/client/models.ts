@@ -147,6 +147,34 @@ export type StoreItemsByIdsPublic = {
   count: number;
 };
 
+export type PurchaseCreate = {
+  item_id: number;
+  item_name: string;
+  quantity: number;
+  warehouse_price: number | null;
+  retail_price: number | null;
+  date: string;
+  warehouse_id?: number;
+  store_id?: number;
+}
+
+export type PurchasePublic = {
+  id: number;  
+  item_id: number;
+  item_name: string;
+  quantity: number;
+  warehouse_price: number | null;
+  retail_price: number | null;
+  date: string;
+  warehouse_id?: number;
+  store_id?: number;
+};
+
+export type PurchasesPublic = {
+  data: Array<PurchasePublic>;
+  count: number;
+};
+
 export type Message = {
   message: string;
 };
